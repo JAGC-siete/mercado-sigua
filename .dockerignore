@@ -1,0 +1,13 @@
+.git
+.worktrees
+node_modules
+.next
+out
+.env*
+!.env.example
+*.log
+coverage
+.DS_Store
+*.tsbuildinfo
+.vscode
+.idea

@@ -1,0 +1,971 @@
+/**
+ * Identidad visual Mercado San Pablo — cálida, local, no-SaaS.
+ * CTA del hero: cacao oscuro (contrasta con overlay cálido).
+ * Trust: hoja de mercado, no verde corporativo.
+ */
+
+@keyframes mercadoWaPulse {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45); }
+  70% { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.shell {
+  --mercado-cacao: #2a1810;
+  --mercado-chile: #9f1239;
+  --mercado-hoja: #3f5d3a;
+  --mercado-hoja-deep: #2f452c;
+  --mercado-papel: #f6f1e8;
+  --mercado-ink: #292524;
+  --mercado-muted: #78716c;
+  --mercado-cream: #fffaf3;
+  --mercado-line: #e7e0d4;
+  --mercado-font: "Nunito", ui-sans-serif, system-ui, sans-serif;
+
+  --mercado-chrome-h: 4.85rem;
+  --mercado-hero-h: 26rem;
+
+  min-height: 100vh;
+  background-color: var(--mercado-papel);
+  color: var(--mercado-ink);
+  font-family: var(--mercado-font);
+  background-image:
+    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(159, 18, 57, 0.06), transparent 55%),
+    linear-gradient(180deg, #f8f4ec 0%, var(--mercado-papel) 40%, #f0ebe1 100%);
+}
+
+.stickyChrome {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header {
+  border-bottom: 1px solid var(--mercado-line);
+  background: color-mix(in srgb, var(--mercado-cream) 94%, white);
+  backdrop-filter: blur(10px);
+  padding: 0.65rem 1rem;
+}
+
+.headerRow {
+  display: flex;
+  max-width: 72rem;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--mercado-cacao);
+}
+
+.headerNav {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+.headerNavLink {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--mercado-ink);
+  text-decoration: none;
+}
+
+.headerNavLink:hover {
+  color: var(--mercado-chile);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.trust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  color: #f0fdf4;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-align: center;
+  padding: 0.45rem 1rem;
+}
+
+.trustOpen {
+  background: linear-gradient(90deg, var(--mercado-hoja-deep), var(--mercado-hoja));
+}
+
+.trustClosed {
+  background: linear-gradient(90deg, #44403c, #57534e);
+  color: #fafaf9;
+}
+
+.statusDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.statusDotOpen {
+  background: #86efac;
+  box-shadow: 0 0 0 3px rgba(134, 239, 172, 0.35);
+}
+
+.statusDotClosed {
+  background: #fca5a5;
+  box-shadow: 0 0 0 3px rgba(252, 165, 165, 0.28);
+}
+
+.howTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 0;
+  background: transparent;
+  color: var(--mercado-cacao);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.15rem 0;
+}
+
+.howTrigger:hover {
+  color: var(--mercado-chile);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.howOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(28, 20, 16, 0.55);
+}
+
+.howDialog {
+  width: min(28rem, 100%);
+  border-radius: 1rem;
+  border: 1px solid var(--mercado-line);
+  background: var(--mercado-cream);
+  padding: 1.25rem 1.35rem 1.4rem;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.howClose {
+  border: 0;
+  background: transparent;
+  color: var(--mercado-muted);
+  cursor: pointer;
+  padding: 0.15rem;
+}
+
+.howSteps {
+  list-style: none;
+  margin: 1.15rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.howSteps li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.howStepN {
+  display: inline-flex;
+  height: 1.75rem;
+  width: 1.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #efe6d8;
+  color: var(--mercado-cacao);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.howStepTitle {
+  font-weight: 800;
+  color: var(--mercado-cacao);
+}
+
+.howStepBody {
+  margin-top: 0.15rem;
+  font-size: 0.9rem;
+  color: var(--mercado-muted);
+  line-height: 1.4;
+}
+
+.footer {
+  margin-top: 4rem;
+  border-top: 1px solid var(--mercado-line);
+  background: var(--mercado-cream);
+}
+
+.footerGrid {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2.25rem 1rem 1.5rem;
+  display: grid;
+  gap: 2rem;
+}
+
+.footerHeading {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--mercado-cacao);
+  margin-bottom: 0.75rem;
+}
+
+.hoursTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.hoursTable th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--mercado-ink);
+  padding: 0.3rem 0.75rem 0.3rem 0;
+}
+
+.hoursTable td {
+  text-align: right;
+  color: var(--mercado-muted);
+  padding: 0.3rem 0;
+  white-space: nowrap;
+}
+
+.footerCats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem 1rem;
+  font-size: 0.875rem;
+}
+
+.footerCats a,
+.footerList a {
+  color: var(--mercado-ink);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.footerCats a:hover,
+.footerList a:hover {
+  color: var(--mercado-chile);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.footerList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+}
+
+.footerMuted {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--mercado-muted);
+  line-height: 1.45;
+}
+
+.footerMuted a {
+  color: var(--mercado-chile);
+  font-weight: 700;
+}
+
+.footerTrust {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+  border-top: 1px solid var(--mercado-line);
+  padding-top: 1.25rem;
+  font-size: 0.8rem;
+  color: var(--mercado-muted);
+  line-height: 1.5;
+}
+
+.footerLegal {
+  margin-top: 0.65rem;
+}
+
+.footerLegal a {
+  color: var(--mercado-cacao);
+  font-weight: 700;
+}
+
+.headerNavVisit {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .headerNav {
+    display: flex;
+  }
+
+  .footerGrid {
+    grid-template-columns: 1.2fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand {
+    font-size: 0.95rem;
+    max-width: 11rem;
+    line-height: 1.2;
+  }
+
+  .howTrigger span {
+    display: none;
+  }
+
+  .shell {
+    --mercado-chrome-h: 5.5rem;
+    --mercado-hero-h: 22rem;
+  }
+}
+
+.hero {
+  position: sticky;
+  top: var(--mercado-chrome-h);
+  z-index: 40;
+  overflow: visible;
+  isolation: isolate;
+  padding: 4.5rem 1rem 5rem;
+  text-align: center;
+  background-color: #1c1410;
+  background-size: cover;
+  background-position: center 35%;
+}
+
+.homeSection {
+  scroll-margin-top: calc(var(--mercado-chrome-h) + var(--mercado-hero-h) + 0.75rem);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Overlay más corto: deja color del mercado arriba; oscurece abajo para leer. */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(28, 20, 16, 0.28) 0%,
+      rgba(28, 20, 16, 0.42) 42%,
+      rgba(28, 20, 16, 0.78) 100%
+    );
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  max-width: 42rem;
+}
+
+.heroEyebrow {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fde68a;
+}
+
+.heroTitle {
+  margin-top: 0.5rem;
+  font-size: clamp(1.45rem, 3.8vw, 2.45rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+}
+
+.heroLead {
+  margin: 1.15rem auto 0;
+  max-width: 36rem;
+  font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+  line-height: 1.45;
+  color: #fff7ed;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
+}
+
+.searchForm {
+  position: relative;
+  z-index: 2;
+  margin: 2.5rem auto 0;
+  max-width: 42rem;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #fff;
+  padding: 0.3rem;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.searchHints {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  margin-top: 0.5rem;
+  max-height: min(14rem, calc(100dvh - var(--mercado-chrome-h) - 11rem));
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--mercado-line);
+  border-radius: 1rem;
+  background: #fff;
+  text-align: left;
+}
+
+.searchHintLink {
+  display: block;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  color: var(--mercado-ink);
+}
+
+.searchHintLink:hover {
+  background: #fffbeb;
+}
+
+.searchSubmit {
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 0.75rem 1.4rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fffaf3;
+  background: var(--mercado-cacao);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.searchSubmit:hover,
+.searchSubmit:focus-visible {
+  background: var(--mercado-chile);
+  outline: none;
+}
+
+.searchSubmit:active {
+  transform: scale(0.98);
+}
+
+.sectionTitle {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--mercado-cacao);
+}
+
+.groupTitle {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--mercado-cacao);
+}
+
+.categoryStrip {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.2rem 0.1rem 0.65rem;
+  scrollbar-width: thin;
+}
+
+.categoryCard {
+  display: flex;
+  flex: 0 0 5.75rem;
+  width: 5.75rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  border: 0;
+  background: transparent;
+  padding: 0.15rem;
+  text-align: center;
+  text-decoration: none;
+  scroll-snap-align: start;
+}
+
+.categoryCard p {
+  margin: 0;
+  max-width: 5.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--mercado-ink);
+}
+
+.categoryCard:hover .categoryIcon {
+  border-color: #d6c7b0;
+}
+
+.categoryCardActive .categoryIcon {
+  border-color: var(--mercado-chile);
+  background: #fff1f2;
+  color: var(--mercado-chile);
+}
+
+.categoryIcon {
+  display: inline-flex;
+  height: 4.75rem;
+  width: 4.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--mercado-line);
+  background: #fff;
+  color: var(--mercado-cacao);
+}
+
+.ctaSolid {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.65rem;
+  padding: 0.7rem 1.15rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fffaf3;
+  background: var(--mercado-cacao);
+  transition: background 0.15s ease;
+}
+
+.ctaSolid:hover {
+  background: var(--mercado-chile);
+}
+
+.panelLocal {
+  border: 1px solid var(--mercado-line);
+  background: linear-gradient(135deg, #fffaf3 0%, #f3e9d8 100%);
+  border-radius: 1.15rem;
+  padding: 2rem;
+}
+
+.vendorCard {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-color: var(--mercado-line) !important;
+  background: var(--mercado-cream) !important;
+}
+
+.vendorCard:hover,
+.vendorCard:active {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(42, 24, 16, 0.14);
+}
+
+.waPulse:hover,
+.waPulse:active,
+.vendorCard:hover .waPulse,
+.vendorCard:active .waPulse {
+  animation: mercadoWaPulse 1.4s ease-out infinite;
+}
+
+.heroWa {
+  animation: mercadoWaPulse 2.4s ease-out infinite;
+}
+
+.vendorLanding {
+  padding-bottom: 7rem;
+}
+
+.stickyReserve {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 3.25rem 1rem 4rem;
+  }
+
+  .stickyReserve {
+    display: block;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 40;
+    border-top: 1px solid var(--mercado-line);
+    background: var(--mercado-cream);
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  }
+}
+
+.inscriptionLead {
+  color: var(--mercado-muted);
+  line-height: 1.55;
+}
+
+.inscriptionForm {
+  border: 1px solid var(--mercado-line);
+  background: var(--mercado-cream);
+  border-radius: 1.15rem;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.75rem;
+}
+
+.inscriptionSection {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+  display: grid;
+  gap: 1.1rem;
+}
+
+.inscriptionSection h2,
+.inscriptionSection legend {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--mercado-cacao);
+}
+
+.inscriptionLabel {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mercado-ink);
+}
+
+.inscriptionHint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--mercado-muted);
+  line-height: 1.45;
+}
+
+.inscriptionError {
+  margin: 0.35rem 0 0;
+  font-size: 0.875rem;
+  color: #9f1239;
+}
+
+.inscriptionCheck {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--mercado-ink);
+}
+
+.inscriptionCheck input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--mercado-chile);
+}
+
+.planGrid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.planCard {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.7rem;
+  align-items: center;
+  border: 1px solid var(--mercado-line);
+  background: #fff;
+  border-radius: 0.9rem;
+  padding: 1rem;
+  cursor: pointer;
+  color: var(--mercado-ink);
+}
+
+.planCard:focus-within,
+.planCardSelected {
+  border-color: var(--mercado-chile);
+  box-shadow: 0 0 0 3px rgba(159, 18, 57, 0.18);
+}
+
+.planCard input {
+  margin-top: 0.2rem;
+  accent-color: var(--mercado-chile);
+}
+
+.planCardBody {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.planCardTitle {
+  font-weight: 800;
+  color: var(--mercado-cacao);
+}
+
+.planCardPrice {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--mercado-chile);
+}
+
+.inscriptionSubmit {
+  width: 100%;
+  border: 0;
+  border-radius: 0.65rem;
+  padding: 0.85rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fffaf3;
+  background: var(--mercado-cacao);
+  cursor: pointer;
+}
+
+.inscriptionSubmit:hover:not(:disabled) {
+  background: var(--mercado-chile);
+}
+
+.inscriptionSubmit:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.heroVisit {
+  position: relative;
+  top: auto;
+  z-index: 1;
+}
+
+.v2Section {
+  scroll-margin-top: calc(var(--mercado-chrome-h) + 0.85rem);
+}
+
+.heroCtas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
+  margin: 1.5rem auto 0;
+}
+
+.ctaGhost {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.65rem;
+  padding: 0.7rem 1.15rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fffaf3;
+  background: transparent;
+  border: 1px solid rgba(255, 250, 243, 0.55);
+  text-decoration: none;
+}
+
+.ctaGhost:hover {
+  background: rgba(255, 250, 243, 0.12);
+}
+
+.benefitGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+.benefitCard {
+  border: 1px solid var(--mercado-line);
+  background: var(--mercado-cream);
+  border-radius: 1rem;
+  padding: 1.15rem 1.2rem;
+}
+
+.benefitIcon {
+  display: inline-flex;
+  height: 2.35rem;
+  min-width: 2.35rem;
+  padding: 0 0.35rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #efe6d8;
+  color: var(--mercado-cacao);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.benefitCard h3 {
+  margin: 0.7rem 0 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--mercado-cacao);
+}
+
+.benefitCard p {
+  margin: 0.35rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--mercado-muted);
+}
+
+.areaGrid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.areaCard {
+  overflow: hidden;
+  border: 1px solid var(--mercado-line);
+  background: var(--mercado-cream);
+  border-radius: 1.15rem;
+}
+
+.areaPhoto {
+  display: block;
+  width: 100%;
+  height: 13rem;
+  object-fit: cover;
+}
+
+.areaBody {
+  padding: 1.2rem 1.25rem 1.35rem;
+}
+
+.areaAisle {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mercado-chile);
+}
+
+.areaCard h3 {
+  margin: 0.35rem 0 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--mercado-cacao);
+}
+
+.areaCard p {
+  margin: 0.55rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--mercado-muted);
+}
+
+.areaCta {
+  display: inline-flex;
+  margin-top: 0.95rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--mercado-cacao);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.areaCta:hover {
+  color: var(--mercado-chile);
+}
+
+.locatariosLink {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--mercado-muted);
+  text-decoration: none;
+}
+
+.locatariosLink:hover {
+  color: var(--mercado-cacao);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (min-width: 640px) {
+  .benefitGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .areaGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .benefitGrid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .areaGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .areaPhoto {
+    height: 15rem;
+  }
+}
+
+.inscriptionSuccess {
+  border: 1px solid #f5d0a8;
+  background: #fff;
+  border-radius: 1.15rem;
+  padding: 2rem;
+}
+
+.inscriptionSuccess h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--mercado-cacao);
+}
+
+.inscriptionSuccess p {
+  margin: 0.75rem 0 0;
+  color: var(--mercado-muted);
+  line-height: 1.5;
+}
+
+@media (min-width: 640px) {
+  .inscriptionForm {
+    padding: 2rem;
+  }
+
+  .planGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

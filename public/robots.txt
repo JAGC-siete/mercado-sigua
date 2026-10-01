@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Allow: /mercadosanpablosigua
+Disallow: /api/
+Disallow: /app/
+
+Sitemap: /sitemap.xml

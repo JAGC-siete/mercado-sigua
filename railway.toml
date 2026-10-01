@@ -1,0 +1,31 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/api/health"
+healthcheckTimeout = 60
+restartPolicyType = "on_failure"
+numReplicas = 1
+sleepApplication = false
+
+[variables]
+TZ = "America/Tegucigalpa"
+NODE_ENV = "production"
+PORT = "8080"
+HOSTNAME = "0.0.0.0"
+NEXT_TELEMETRY_DISABLED = "1"
+
+# En Railway Dashboard (no en el repo):
+# NEXT_PUBLIC_SUPABASE_URL
+# NEXT_PUBLIC_SUPABASE_ANON_KEY
+# SUPABASE_SERVICE_ROLE_KEY
+# NEXT_PUBLIC_SITE_URL
+# RESEND_API_KEY
+# RESEND_FROM
+# NOTIFY_EMAIL
+# MERCADO_INSCRIPTION_NOTIFY_EMAIL
+# MERCADO_ADMIN_EMAIL
+# MERCADO_ADMIN_PASSWORD
+# MERCADO_ADMIN_SESSION_SECRET
+# MERCADO_HOSTS
