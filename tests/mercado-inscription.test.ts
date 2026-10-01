@@ -225,7 +225,8 @@ describe('mercado: solicitud de registro de local', () => {
 
     const nueva = readFileSync(join(process.cwd(), 'pages/app/mercado/fichas/nueva.tsx'), 'utf8')
     assert.match(nueva, /whatsapp: app\.whatsapp/)
-    assert.match(nueva, /featured: app\.presence_plan === 'featured_vip'/)
+    assert.match(nueva, /presence_plan === 'featured_vip'/)
+    assert.match(nueva, /featured: isVip/)
   })
 
   it('el formulario público usa el mismo Zod, honeypot y radio de plan', () => {

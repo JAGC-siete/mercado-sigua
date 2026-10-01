@@ -11,7 +11,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "seed:super-admin": "tsx scripts/seed-super-admin.ts",
-    "test": "npx tsx --test tests/mercado-schema.test.ts tests/mercado-jsonld.test.ts tests/mercado-chrome.test.ts tests/mercado-vendors-db.test.ts tests/mercado-inscription.test.ts tests/mercado-public-shell.test.ts tests/mercado-v2.test.ts tests/hosts.test.ts tests/auth-role-access.test.ts"
+    "test": "npx tsx --test tests/mercado-schema.test.ts tests/mercado-jsonld.test.ts tests/mercado-chrome.test.ts tests/mercado-vendors-db.test.ts tests/mercado-inscription.test.ts tests/mercado-public-shell.test.ts tests/mercado-v2.test.ts tests/hosts.test.ts tests/auth-role-access.test.ts tests/mercado-vip.test.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",

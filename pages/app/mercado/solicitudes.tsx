@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import type { GetServerSideProps } from 'next'
@@ -40,10 +40,12 @@ const MANUAL_STATUSES: VendorApplicationStatus[] = ['received', 'reviewed', 'rej
 
 const STATUS_LABEL: Record<VendorApplicationStatus, string> = {
   received: 'Recibida',
-  reviewed: 'En proceso',
+  reviewed: 'En revisión',
   approved: 'Aprobada (ficha)',
   rejected: 'Descartada',
 }
+
+type StatusFilter = 'all' | VendorApplicationStatus
 
 function statusClass(status: VendorApplicationStatus): string {
   if (status === 'approved') return 'bg-emerald-500/15 text-emerald-300 border-emerald-400/30'
@@ -60,6 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 export default function MercadoSolicitudesPage({ operatorEmail }: { operatorEmail: string }) {
   const [rows, setRows] = useState<MercadoApplicationRow[]>([])
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [savingId, setSavingId] = useState<string | null>(null)
@@ -86,7 +89,16 @@ export default function MercadoSolicitudesPage({ operatorEmail }: { operatorEmai
     void load()
   }, [load])
 
+  const visible = useMemo(
+    () => (statusFilter === 'all' ? rows : rows.filter((row) => row.status === statusFilter)),
+    [rows, statusFilter]
+  )
+
   async function patchStatus(id: string, status: VendorApplicationStatus) {
+    if (status === 'rejected') {
+      const ok = window.confirm('¿Descartar esta solicitud? Esta acción queda registrada en el estado.')
+      if (!ok) return
+    }
     setSavingId(id)
     try {
       const res = await fetch(MERCADO_APPLICATIONS_ADMIN_API_PATH, {
@@ -112,18 +124,31 @@ export default function MercadoSolicitudesPage({ operatorEmail }: { operatorEmai
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className="space-y-6 p-6">
-        <header>
-          <h1 className="text-2xl font-bold text-white">Mercado San Pablo — Solicitudes</h1>
-          <p className="mt-1 text-sm text-white/60">
-            Inscripción al directorio Pickup. Revisá → Creá ficha (pasa a Aprobada). No escribe en
-            leads ni en planilla.
-          </p>
-          <Link
-            href={mercadoAdminListPath()}
-            className="mt-2 inline-block text-sm text-amber-200 underline-offset-2 hover:underline"
+        <header className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Mercado San Pablo — Solicitudes</h1>
+            <p className="mt-1 text-sm text-white/60">
+              Inscripción al directorio Pickup. Revisá → Creá ficha (pasa a Aprobada). No escribe en
+              leads ni en planilla.
+            </p>
+            <Link
+              href={mercadoAdminListPath()}
+              className="mt-2 inline-block text-sm text-amber-200 underline-offset-2 hover:underline"
+            >
+              Ir a fichas publicadas
+            </Link>
+          </div>
+          <select
+            value={statusFilter}
+            onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
+            className="h-10 rounded-lg border border-white/20 bg-white/10 px-3 text-white"
           >
-            Ir a fichas publicadas
-          </Link>
+            <option value="all">Todos los estados</option>
+            <option value="received">Recibidas</option>
+            <option value="reviewed">En revisión</option>
+            <option value="approved">Aprobadas</option>
+            <option value="rejected">Descartadas</option>
+          </select>
         </header>
 
         {error ? (
@@ -139,13 +164,15 @@ export default function MercadoSolicitudesPage({ operatorEmail }: { operatorEmai
 
         {loading ? (
           <p className="text-sm text-white/70">Cargando solicitudes…</p>
-        ) : rows.length === 0 ? (
+        ) : visible.length === 0 ? (
           <Card variant="glass">
-            <CardContent className="p-6 text-sm text-white/60">Aún no hay solicitudes.</CardContent>
+            <CardContent className="p-6 text-sm text-white/60">
+              {rows.length === 0 ? 'Aún no hay solicitudes.' : 'No hay solicitudes con ese filtro.'}
+            </CardContent>
           </Card>
         ) : (
           <div className="space-y-3">
-            {rows.map((row) => (
+            {visible.map((row) => (
               <Card key={row.id} variant="glass">
                 <CardContent className="space-y-3 p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">

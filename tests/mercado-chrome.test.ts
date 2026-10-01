@@ -24,6 +24,14 @@ describe('mercado: horario oficial', () => {
     assert.equal(status.open, false)
     assert.match(status.label, /cerrado/i)
   })
+
+  it('respeta forceClosed aunque el horario diga abierto', () => {
+    const status = marketOpenStatus(new Date('2026-09-15T16:00:00.000Z'), {
+      forceClosed: true,
+    })
+    assert.equal(status.open, false)
+    assert.match(status.label, /cerrado/i)
+  })
 })
 
 describe('mercado: cómo funciona', () => {

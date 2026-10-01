@@ -17,8 +17,10 @@ Línea de producción: [https://mercado.humanosisu.net/mercadosanpablosigua](htt
 | `/app/forgot-password` | Recuperación de contraseña |
 | `/auth/update-password` | Set/reset password (invite / recovery) |
 | `/app` | Home stub del locatario |
+| `/app/mercado` | Home operador (stats) |
 | `/app/mercado/fichas` | Admin de fichas (`/nueva`, `/[id]`) |
 | `/app/mercado/solicitudes` | Bandeja de inscripciones |
+| `/app/mercado/configuracion` | Cierre forzado, horario, WhatsApp soporte |
 | `/app/mercado/login` | 301 → `/app/login?redirect=/app/mercado` |
 | `POST /api/auth/login` | Auth unificado (rate limit, role gate, claim vendor) |
 | `POST /api/mercado/inscriptions` | Alta pública de solicitud |
@@ -32,7 +34,7 @@ Un form, un endpoint. Separación: `user_profiles.role` + `mercado_vendors.auth_
 
 | Rol | Destino | Notas |
 | --- | --- | --- |
-| `super_admin` | `/app/mercado/fichas` | Operador municipal. Reemplaza cookie HMAC `mercado_op`. |
+| `super_admin` | `/app/mercado` | Operador municipal. Reemplaza cookie HMAC `mercado_op`. |
 | `vendor` | `/app` | Locatario. Claim por `contact_email` si `auth_user_id` es null. |
 
 Sesión: cookies Supabase httpOnly + `user_sessions` (TTL 12 h, idle 90 min). Browser: `autoRefreshToken: false`, `localStorage.user`. Heartbeat en `/api/auth/heartbeat`.
@@ -59,7 +61,7 @@ Este repo no incluye Webycitas, Planilla, `company_id` ni roles HR.
 | Auth | `lib/auth/*`, `lib/supabase/{server,browser,admin}.ts` |
 | Admin | `/app/mercado/*` + JWT `super_admin` |
 | Locatario | `/app` stub + claim de `mercado_vendors` |
-| Tablas | `mercado_vendors`, `mercado_vendor_applications`, `user_profiles`, `user_sessions` |
+| Tablas | `mercado_vendors`, `mercado_vendor_applications`, `user_profiles`, `user_sessions`, `mercado_site_settings`, `mercado_wa_clicks` |
 | Storage | bucket `mercado-san-pablo` |
 | Resend | `RESEND_FROM` = marca Mercado San Pablo |
 

@@ -23,15 +23,25 @@ import {
   type VendorRow,
   vendorRowToPublicCard,
 } from '../../../../lib/mercado/vendors-db'
+import { defaultVipExpiresAt, resolveVipFields } from '../../../../lib/mercado/vip'
 import { revalidateMercadoPages } from '../../../../lib/mercado/revalidate'
 
-const patchFlagsSchema = z.object({
-  id: z.string().uuid(),
-  status: vendorStatusSchema.optional(),
-  featured: z.boolean().optional(),
-}).refine((v) => v.status !== undefined || v.featured !== undefined, {
-  message: 'Indicá status o featured.',
-})
+const patchFlagsSchema = z
+  .object({
+    id: z.string().uuid(),
+    status: vendorStatusSchema.optional(),
+    featured: z.boolean().optional(),
+    vipExpiresAt: z.string().datetime({ offset: true }).nullable().optional(),
+    vipNotes: z.string().trim().max(500).nullable().optional(),
+  })
+  .refine(
+    (v) =>
+      v.status !== undefined ||
+      v.featured !== undefined ||
+      v.vipExpiresAt !== undefined ||
+      v.vipNotes !== undefined,
+    { message: 'Indicá status, featured o VIP.' }
+  )
 
 const promoteSchema = z.object({
   applicationId: z.string().uuid(),
@@ -51,7 +61,25 @@ const promoteSchema = z.object({
     .optional(),
   status: vendorStatusSchema.optional(),
   featured: z.boolean().optional(),
+  vipExpiresAt: z.string().datetime({ offset: true }).nullable().optional(),
+  vipNotes: z.string().optional(),
 })
+
+function applyVipToUpdate(
+  update: Record<string, unknown>,
+  input: {
+    featured?: boolean
+    vipExpiresAt?: string | null
+    vipNotes?: string | null
+    previousFeatured?: boolean
+    previousExpiresAt?: string | null
+  }
+) {
+  const vip = resolveVipFields(input)
+  if (vip.featured !== undefined) update.featured = vip.featured
+  if (vip.vip_expires_at !== undefined) update.vip_expires_at = vip.vip_expires_at
+  if (vip.vip_notes !== undefined) update.vip_notes = vip.vip_notes
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!['GET', 'POST', 'PATCH'].includes(req.method ?? '')) {
@@ -85,9 +113,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'PATCH') {
       const flags = patchFlagsSchema.safeParse(req.body)
       if (flags.success && !('name' in (req.body ?? {})) && !('slug' in (req.body ?? {}))) {
+        const { data: previous } = await adminClient
+          .from(VENDORS_TABLE)
+          .select('featured, vip_expires_at')
+          .eq('id', flags.data.id)
+          .maybeSingle()
+
         const patch: Record<string, unknown> = { updated_by: operatorEmail }
         if (flags.data.status !== undefined) patch.status = flags.data.status
-        if (flags.data.featured !== undefined) patch.featured = flags.data.featured
+        applyVipToUpdate(patch, {
+          featured: flags.data.featured,
+          vipExpiresAt: flags.data.vipExpiresAt,
+          vipNotes: flags.data.vipNotes,
+          previousFeatured: Boolean(previous?.featured),
+          previousExpiresAt: (previous?.vip_expires_at as string | null) ?? null,
+        })
 
         const { data, error } = await adminClient
           .from(VENDORS_TABLE)
@@ -112,6 +152,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const id = typeof req.body?.id === 'string' ? req.body.id : null
       if (!id) return res.status(400).json({ error: 'Falta id de la ficha.' })
 
+      const { data: previous } = await adminClient
+        .from(VENDORS_TABLE)
+        .select('featured, vip_expires_at')
+        .eq('id', id)
+        .maybeSingle()
+
       const u = parsed.data
       const update: Record<string, unknown> = { updated_by: operatorEmail }
       if (u.name !== undefined) update.name = u.name
@@ -131,7 +177,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (u.paymentMethods !== undefined) update.payment_methods = u.paymentMethods
       if (u.gallery !== undefined) update.gallery = u.gallery
       if (u.status !== undefined) update.status = u.status
-      if (u.featured !== undefined) update.featured = u.featured
+      applyVipToUpdate(update, {
+        featured: u.featured,
+        vipExpiresAt: u.vipExpiresAt,
+        vipNotes: u.vipNotes,
+        previousFeatured: Boolean(previous?.featured),
+        previousExpiresAt: (previous?.vip_expires_at as string | null) ?? null,
+      })
 
       const { data, error } = await adminClient
         .from(VENDORS_TABLE)
@@ -159,7 +211,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const { data: application, error: appErr } = await adminClient
         .from(VENDOR_APPLICATIONS_TABLE)
-        .select('id, stall_number, merchant_name, business_name, status, vendor_id')
+        .select('id, stall_number, merchant_name, business_name, status, vendor_id, presence_plan')
         .eq('id', promoted.data.applicationId)
         .maybeSingle()
 
@@ -171,6 +223,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const name = (promoted.data.name ?? application.business_name).trim()
+      const featuredFromPlan = application.presence_plan === 'featured_vip'
+      const featured = promoted.data.featured ?? featuredFromPlan
+      const vipExpiresAt =
+        promoted.data.vipExpiresAt ?? (featured ? defaultVipExpiresAt() : null)
+
       const createBody = {
         name,
         slug: promoted.data.slug,
@@ -187,7 +244,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         logoUrl: promoted.data.logoUrl,
         gallery: promoted.data.gallery ?? [],
         status: promoted.data.status ?? 'active',
-        featured: promoted.data.featured ?? false,
+        featured,
+        vipExpiresAt,
+        vipNotes: promoted.data.vipNotes,
       }
 
       const parsed = parseCreateVendor(createBody)
@@ -195,16 +254,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Datos inválidos' })
       }
 
-      const insert = publicCardToInsert({
-        ...parsed.data,
-        logoUrl: parsed.data.logoUrl ?? null,
-        stallLocation: parsed.data.stallLocation ?? null,
-        hoursNote: parsed.data.hoursNote ?? null,
-        contactEmail: parsed.data.contactEmail ?? null,
-        gallery: parsed.data.gallery ?? [],
-        applicationId: application.id,
-        userId: operatorEmail,
+      const vip = resolveVipFields({
+        featured: parsed.data.featured,
+        vipExpiresAt: parsed.data.vipExpiresAt ?? null,
+        vipNotes: parsed.data.vipNotes ?? null,
       })
+
+      const insert = {
+        ...publicCardToInsert({
+          ...parsed.data,
+          logoUrl: parsed.data.logoUrl ?? null,
+          stallLocation: parsed.data.stallLocation ?? null,
+          hoursNote: parsed.data.hoursNote ?? null,
+          contactEmail: parsed.data.contactEmail ?? null,
+          gallery: parsed.data.gallery ?? [],
+          vipExpiresAt: vip.vip_expires_at ?? null,
+          vipNotes: vip.vip_notes ?? null,
+          applicationId: application.id,
+          userId: operatorEmail,
+        }),
+      }
 
       const { data: vendor, error: insertErr } = await adminClient
         .from(VENDORS_TABLE)
@@ -235,13 +304,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Datos inválidos' })
     }
 
+    const vip = resolveVipFields({
+      featured: parsed.data.featured,
+      vipExpiresAt: parsed.data.vipExpiresAt ?? null,
+      vipNotes: parsed.data.vipNotes ?? null,
+    })
+
     const insert = publicCardToInsert({
       ...parsed.data,
+      featured: vip.featured ?? parsed.data.featured,
       logoUrl: parsed.data.logoUrl ?? null,
       stallLocation: parsed.data.stallLocation ?? null,
       hoursNote: parsed.data.hoursNote ?? null,
       contactEmail: parsed.data.contactEmail ?? null,
       gallery: parsed.data.gallery ?? [],
+      vipExpiresAt: vip.vip_expires_at ?? null,
+      vipNotes: vip.vip_notes ?? null,
       userId: operatorEmail,
     })
 

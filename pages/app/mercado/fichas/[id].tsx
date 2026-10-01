@@ -15,6 +15,7 @@ import {
   mercadoAdminListPath,
 } from '../../../../lib/mercado/paths'
 import { DEFAULT_VENDOR_PAYMENT_METHODS, type CreateVendorPayload, type VendorPaymentMethod, type VendorStatus } from '../../../../lib/mercado/schema'
+import { toDateInputValue } from '../../../../lib/mercado/vip'
 import type { VendorRow } from '../../../../lib/mercado/vendors-db'
 
 function rowToFormValues(row: VendorRow): VendorFormValues {
@@ -40,6 +41,8 @@ function rowToFormValues(row: VendorRow): VendorFormValues {
     paymentMethods: methods.length > 0 ? methods : [...DEFAULT_VENDOR_PAYMENT_METHODS],
     status: row.status as VendorStatus,
     featured: Boolean(row.featured),
+    vipExpiresAt: toDateInputValue(row.vip_expires_at),
+    vipNotes: row.vip_notes || '',
   }
 }
 

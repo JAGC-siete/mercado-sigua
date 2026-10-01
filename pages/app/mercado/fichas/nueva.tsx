@@ -13,6 +13,7 @@ import {
   mercadoAdminListPath,
 } from '../../../../lib/mercado/paths'
 import type { CreateVendorPayload } from '../../../../lib/mercado/schema'
+import { defaultVipExpiresAt, toDateInputValue } from '../../../../lib/mercado/vip'
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const auth = await requireSuperAdminPage(ctx)
@@ -54,11 +55,13 @@ export default function MercadoFichaNuevaPage({ operatorEmail }: { operatorEmail
           return
         }
         setApplicationId(app.id)
+        const isVip = app.presence_plan === 'featured_vip'
         setInitial({
           name: app.business_name,
           stallLocation: app.stall_number,
           whatsapp: app.whatsapp ?? '',
-          featured: app.presence_plan === 'featured_vip',
+          featured: isVip,
+          vipExpiresAt: isVip ? toDateInputValue(defaultVipExpiresAt()) : '',
           description: `${app.business_name} de ${app.merchant_name} en el Mercado Municipal San Pablo. Pedí por WhatsApp y recogé en el local sin hacer fila.`,
           products: ['Consultar por WhatsApp', '', '', '', ''],
           category: 'otros',
@@ -89,6 +92,8 @@ export default function MercadoFichaNuevaPage({ operatorEmail }: { operatorEmail
             gallery: payload.gallery,
             status: payload.status,
             featured: payload.featured,
+            vipExpiresAt: payload.vipExpiresAt,
+            vipNotes: payload.vipNotes,
           }
         : payload
 

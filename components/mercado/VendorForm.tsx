@@ -13,6 +13,11 @@ import {
   type VendorStatus,
 } from '../../lib/mercado/schema'
 import { slugifyVendorName } from '../../lib/mercado/slug'
+import {
+  dateInputToIsoEndOfDay,
+  defaultVipExpiresAt,
+  toDateInputValue,
+} from '../../lib/mercado/vip'
 
 const fieldClass = 'bg-white/10 text-white placeholder:text-gray-400'
 
@@ -31,6 +36,8 @@ export interface VendorFormValues {
   paymentMethods: VendorPaymentMethod[]
   status: VendorStatus
   featured: boolean
+  vipExpiresAt: string
+  vipNotes: string
 }
 
 const EMPTY_VALUES: VendorFormValues = {
@@ -48,6 +55,8 @@ const EMPTY_VALUES: VendorFormValues = {
   paymentMethods: [...DEFAULT_VENDOR_PAYMENT_METHODS],
   status: 'active',
   featured: false,
+  vipExpiresAt: '',
+  vipNotes: '',
 }
 
 async function fileToBase64(file: File): Promise<string> {
@@ -103,6 +112,9 @@ export default function VendorForm({
     const gallery = values.facadeUrl
       ? [{ src: values.facadeUrl, alt: `Fachada de ${values.name || 'el puesto'}` }]
       : []
+    const vipExpiresIso = values.featured
+      ? dateInputToIsoEndOfDay(values.vipExpiresAt) || defaultVipExpiresAt()
+      : null
     const parsed = parseCreateVendor({
       name: values.name,
       slug: effectiveSlug,
@@ -118,6 +130,8 @@ export default function VendorForm({
       gallery,
       status: values.status,
       featured: values.featured,
+      vipExpiresAt: vipExpiresIso,
+      vipNotes: values.vipNotes || undefined,
     })
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? 'Datos inválidos')
@@ -382,13 +396,56 @@ export default function VendorForm({
           <input
             type="checkbox"
             checked={values.featured}
-            onChange={(event) =>
-              setValues((current) => ({ ...current, featured: event.target.checked }))
-            }
+            onChange={(event) => {
+              const featured = event.target.checked
+              setValues((current) => ({
+                ...current,
+                featured,
+                vipExpiresAt:
+                  featured && !current.vipExpiresAt
+                    ? toDateInputValue(defaultVipExpiresAt())
+                    : featured
+                      ? current.vipExpiresAt
+                      : '',
+              }))
+            }}
           />
-          Destacado (aportación anual al día)
+          VIP / aportación anual (destacado en directorio)
         </label>
       </div>
+
+      {values.featured ? (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="vendor-vip-expires" className="mb-1 block text-sm font-medium text-gray-200">
+              Vencimiento VIP
+            </label>
+            <Input
+              id="vendor-vip-expires"
+              type="date"
+              value={values.vipExpiresAt}
+              onChange={(event) =>
+                setValues((current) => ({ ...current, vipExpiresAt: event.target.value }))
+              }
+              className={fieldClass}
+            />
+          </div>
+          <div>
+            <label htmlFor="vendor-vip-notes" className="mb-1 block text-sm font-medium text-gray-200">
+              Notas de aportación
+            </label>
+            <Input
+              id="vendor-vip-notes"
+              value={values.vipNotes}
+              onChange={(event) =>
+                setValues((current) => ({ ...current, vipNotes: event.target.value }))
+              }
+              placeholder="Pagó 2026 · sticker entregado"
+              className={fieldClass}
+            />
+          </div>
+        </div>
+      ) : null}
 
       {error && <p className="text-sm text-red-400">{error}</p>}
 

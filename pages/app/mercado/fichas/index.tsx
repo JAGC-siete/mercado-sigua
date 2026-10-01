@@ -21,6 +21,12 @@ import {
 } from '../../../../lib/mercado/paths'
 import type { VendorStatus } from '../../../../lib/mercado/schema'
 import type { VendorRow } from '../../../../lib/mercado/vendors-db'
+import {
+  matchesVipFilter,
+  vipBadgeKind,
+  vipBadgeLabel,
+  type VipListFilter,
+} from '../../../../lib/mercado/vip'
 
 function StatusBadge({ status }: { status: VendorStatus }) {
   const className =
@@ -28,6 +34,19 @@ function StatusBadge({ status }: { status: VendorStatus }) {
       ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
       : 'bg-white/10 text-gray-300 border-white/20'
   return <Badge className={className}>{status === 'active' ? 'Activo' : 'Inactivo'}</Badge>
+}
+
+function VipBadge({ featured, expiresAt }: { featured: boolean; expiresAt?: string | null }) {
+  const kind = vipBadgeKind(featured, expiresAt)
+  const className =
+    kind === 'expired'
+      ? 'border-red-400/30 bg-red-500/15 text-red-200'
+      : kind === 'expiring'
+        ? 'border-amber-400/30 bg-amber-500/15 text-amber-200'
+        : kind === 'active'
+          ? 'border-amber-400/30 bg-amber-500/15 text-amber-200'
+          : 'border-white/20 bg-white/5 text-gray-400'
+  return <Badge className={className}>{vipBadgeLabel(featured, expiresAt)}</Badge>
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -39,6 +58,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 export default function MercadoFichasAdminPage({ operatorEmail }: { operatorEmail: string }) {
   const [rows, setRows] = useState<VendorRow[]>([])
   const [category, setCategory] = useState<VendorCategory | 'all'>('all')
+  const [vipFilter, setVipFilter] = useState<VipListFilter>('all')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [savingId, setSavingId] = useState<string | null>(null)
@@ -66,11 +86,19 @@ export default function MercadoFichasAdminPage({ operatorEmail }: { operatorEmai
   }, [load])
 
   const visible = useMemo(
-    () => (category === 'all' ? rows : rows.filter((row) => row.category === category)),
-    [rows, category]
+    () =>
+      rows.filter((row) => {
+        if (category !== 'all' && row.category !== category) return false
+        return matchesVipFilter(Boolean(row.featured), row.vip_expires_at, vipFilter)
+      }),
+    [rows, category, vipFilter]
   )
 
   async function patchFlags(id: string, patch: { status?: VendorStatus; featured?: boolean }) {
+    if (patch.status === 'inactive') {
+      const ok = window.confirm('¿Dar de baja esta ficha? Dejará de verse en el directorio.')
+      if (!ok) return
+    }
     setSavingId(id)
     try {
       const res = await fetch(MERCADO_VENDORS_API_PATH, {
@@ -102,7 +130,7 @@ export default function MercadoFichasAdminPage({ operatorEmail }: { operatorEmai
           <div>
             <h1 className="text-2xl font-bold text-white">Fichas /mercadosanpablosigua</h1>
             <p className="mt-1 max-w-2xl text-sm text-white/60">
-              Alta y baja de puestos. Destacado = aportación anual al día. El público solo ve
+              Alta y baja de puestos. VIP = aportación anual con vencimiento. El público solo ve
               activos; el pickup es por WhatsApp.
             </p>
             <Link
@@ -129,20 +157,32 @@ export default function MercadoFichasAdminPage({ operatorEmail }: { operatorEmai
         ) : null}
 
         <Card variant="glass">
-          <CardHeader className="flex flex-row items-center justify-between gap-4">
+          <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-4">
             <CardTitle className="text-lg text-white">Listado</CardTitle>
-            <select
-              value={category}
-              onChange={(event) => setCategory(event.target.value as VendorCategory | 'all')}
-              className="h-10 w-48 rounded-lg border border-white/20 bg-white/10 px-3 text-white"
-            >
-              <option value="all">Todas</option>
-              {VENDOR_CATEGORIES.map((key) => (
-                <option key={key} value={key}>
-                  {VENDOR_CATEGORY_LABEL[key]}
-                </option>
-              ))}
-            </select>
+            <div className="flex flex-wrap gap-2">
+              <select
+                value={vipFilter}
+                onChange={(event) => setVipFilter(event.target.value as VipListFilter)}
+                className="h-10 rounded-lg border border-white/20 bg-white/10 px-3 text-white"
+              >
+                <option value="all">VIP: todos</option>
+                <option value="vip_active">VIP activos</option>
+                <option value="vip_expiring">VIP por vencer (30d)</option>
+                <option value="vip_expired">VIP vencidos</option>
+              </select>
+              <select
+                value={category}
+                onChange={(event) => setCategory(event.target.value as VendorCategory | 'all')}
+                className="h-10 w-48 rounded-lg border border-white/20 bg-white/10 px-3 text-white"
+              >
+                <option value="all">Todas</option>
+                {VENDOR_CATEGORIES.map((key) => (
+                  <option key={key} value={key}>
+                    {VENDOR_CATEGORY_LABEL[key]}
+                  </option>
+                ))}
+              </select>
+            </div>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -159,7 +199,7 @@ export default function MercadoFichasAdminPage({ operatorEmail }: { operatorEmai
                       <th className="px-3 py-2">Negocio</th>
                       <th className="px-3 py-2">Categoría</th>
                       <th className="px-3 py-2">Visible</th>
-                      <th className="px-3 py-2">Destacado</th>
+                      <th className="px-3 py-2">VIP</th>
                       <th className="px-3 py-2">WhatsApp</th>
                       <th className="px-3 py-2">Acciones</th>
                     </tr>
@@ -191,15 +231,7 @@ export default function MercadoFichasAdminPage({ operatorEmail }: { operatorEmai
                           </Button>
                         </td>
                         <td className="px-3 py-3">
-                          <Badge
-                            className={
-                              row.featured
-                                ? 'border-amber-400/30 bg-amber-500/15 text-amber-200'
-                                : 'border-white/20 bg-white/5 text-gray-400'
-                            }
-                          >
-                            {row.featured ? 'Aportación al día' : 'Sin aportación'}
-                          </Badge>
+                          <VipBadge featured={Boolean(row.featured)} expiresAt={row.vip_expires_at} />
                           <Button
                             size="sm"
                             variant="outline"
@@ -207,7 +239,7 @@ export default function MercadoFichasAdminPage({ operatorEmail }: { operatorEmai
                             disabled={savingId === row.id}
                             onClick={() => void patchFlags(row.id, { featured: !row.featured })}
                           >
-                            {row.featured ? 'Quitar destacado' : 'Marcar aportación'}
+                            {row.featured ? 'Quitar VIP' : 'Marcar VIP'}
                           </Button>
                         </td>
                         <td className="px-3 py-3">{row.whatsapp}</td>

@@ -23,7 +23,7 @@ describe('auth: role access mercado', () => {
   })
 
   it('redirige post-login por rol', () => {
-    assert.equal(postLoginPath('super_admin', null), '/app/mercado/fichas')
+    assert.equal(postLoginPath('super_admin', null), '/app/mercado')
     assert.equal(postLoginPath('super_admin', '/app/mercado/solicitudes'), '/app/mercado/solicitudes')
     assert.equal(postLoginPath('vendor', '/app/mercado/fichas'), '/app')
   })

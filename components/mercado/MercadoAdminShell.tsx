@@ -4,7 +4,9 @@ import { useRouter } from 'next/router'
 import {
   APP_LOGIN_PATH,
   AUTH_LOGOUT_API_PATH,
+  mercadoAdminHomePath,
   mercadoAdminListPath,
+  mercadoAdminSettingsPath,
   mercadoApplicationsAdminPath,
   mercadoHomePath,
 } from '../../lib/mercado/paths'
@@ -43,11 +45,17 @@ export default function MercadoAdminShell({
             {operatorEmail ? <p className="text-xs text-white/50">{operatorEmail}</p> : null}
           </div>
           <nav className="flex flex-wrap items-center gap-3 text-sm">
+            <Link href={mercadoAdminHomePath()} className="text-amber-200 hover:underline">
+              Inicio
+            </Link>
             <Link href={mercadoAdminListPath()} className="text-amber-200 hover:underline">
               Fichas
             </Link>
             <Link href={mercadoApplicationsAdminPath()} className="text-amber-200 hover:underline">
               Solicitudes
+            </Link>
+            <Link href={mercadoAdminSettingsPath()} className="text-amber-200 hover:underline">
+              Configuración
             </Link>
             <Link href={mercadoHomePath()} className="text-white/60 hover:underline">
               Directorio

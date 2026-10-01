@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { MercadoInscriptionHeaderLink } from './InscriptionCta'
 import MercadoFooter from './MercadoFooter'
 import MercadoHowItWorks from './MercadoHowItWorks'
+import { useMercadoSitePublic } from './useMercadoSitePublic'
 import { marketOpenStatus } from '../../lib/mercado/market-hours'
 import { mercadoHomePath, mercadoInscriptionPath } from '../../lib/mercado/paths'
 import { MERCADO_SEO } from '../../lib/mercado/home'
@@ -17,13 +18,15 @@ function homeAnchor(hash: string) {
 export default function MercadoPublicShell({ children }: { children: ReactNode }) {
   const router = useRouter()
   const showInscriptionLink = router.pathname !== mercadoInscriptionPath()
+  const site = useMercadoSitePublic()
   const [status, setStatus] = useState(() => marketOpenStatus())
 
   useEffect(() => {
-    setStatus(marketOpenStatus())
-    const id = window.setInterval(() => setStatus(marketOpenStatus()), 60_000)
+    const opts = { forceClosed: site.forceClosed, hours: site.hours }
+    setStatus(marketOpenStatus(new Date(), opts))
+    const id = window.setInterval(() => setStatus(marketOpenStatus(new Date(), opts)), 60_000)
     return () => window.clearInterval(id)
-  }, [])
+  }, [site.forceClosed, site.hours])
 
   const nav = useMemo(
     () => [
@@ -80,7 +83,10 @@ export default function MercadoPublicShell({ children }: { children: ReactNode }
       </div>
 
       <main>{children}</main>
-      <MercadoFooter />
+      <MercadoFooter
+        hoursRows={site.hoursRows}
+        supportWhatsapp={site.supportWhatsapp}
+      />
     </div>
   )
 }

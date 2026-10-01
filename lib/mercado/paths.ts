@@ -6,7 +6,9 @@
 export const MERCADO_PUBLIC_PREFIX = '/mercadosanpablosigua'
 export const MERCADO_V2_PREFIX = '/mercadosanpablosiguav2'
 export const MERCADO_LEGACY_PREFIX = '/mercado'
+export const MERCADO_ADMIN_HOME_PATH = '/app/mercado'
 export const MERCADO_ADMIN_PATH = '/app/mercado/fichas'
+export const MERCADO_ADMIN_SETTINGS_PATH = '/app/mercado/configuracion'
 /** @deprecated Usar APP_LOGIN_PATH. Se mantiene para redirects 301. */
 export const MERCADO_ADMIN_LOGIN_PATH = '/app/mercado/login'
 export const APP_LOGIN_PATH = '/app/login'
@@ -20,6 +22,10 @@ export const AUTH_HEARTBEAT_API_PATH = '/api/auth/heartbeat'
 export const MERCADO_VENDORS_API_PATH = '/api/admin/mercado/vendors'
 export const MERCADO_VENDORS_UPLOAD_API_PATH = '/api/admin/mercado/upload'
 export const MERCADO_VENDORS_INVITE_API_PATH = '/api/admin/mercado/invite'
+export const MERCADO_ADMIN_SETTINGS_API_PATH = '/api/admin/mercado/settings'
+export const MERCADO_ADMIN_STATS_API_PATH = '/api/admin/mercado/stats'
+export const MERCADO_SITE_PUBLIC_API_PATH = '/api/mercado/site-public'
+export const MERCADO_WA_CLICK_API_PATH = '/api/mercado/wa-click'
 export const MERCADO_INSCRIPTION_PATH = `${MERCADO_PUBLIC_PREFIX}/inscripcion`
 export const MERCADO_INSCRIPTION_API_PATH = '/api/mercado/inscriptions'
 export const MERCADO_APPLICATIONS_ADMIN_PATH = '/app/mercado/solicitudes'
@@ -50,8 +56,16 @@ export function mercadoCategoryPath(category: string): string {
   return `${MERCADO_PUBLIC_PREFIX}?categoria=${category}`
 }
 
+export function mercadoAdminHomePath(): string {
+  return MERCADO_ADMIN_HOME_PATH
+}
+
 export function mercadoAdminListPath(): string {
   return MERCADO_ADMIN_PATH
+}
+
+export function mercadoAdminSettingsPath(): string {
+  return MERCADO_ADMIN_SETTINGS_PATH
 }
 
 export function mercadoAdminNewPath(fromApplicationId?: string): string {

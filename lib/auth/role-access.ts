@@ -37,7 +37,7 @@ export function postLoginPath(role: AppRole, redirect?: string | null): string {
 
   if (role === 'super_admin') {
     if (safe && (safe === '/app/mercado' || safe.startsWith('/app/mercado/'))) return safe
-    return '/app/mercado/fichas'
+    return '/app/mercado'
   }
 
   return '/app'

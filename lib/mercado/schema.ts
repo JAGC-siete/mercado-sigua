@@ -150,6 +150,12 @@ const createVendorFields = {
   gallery: z.preprocess((value) => (value === undefined || value === null ? [] : value), vendorGallerySchema.default([])),
   status: vendorStatusSchema.default('active'),
   featured: z.boolean().default(false),
+  vipExpiresAt: z
+    .string()
+    .datetime({ offset: true })
+    .nullable()
+    .optional(),
+  vipNotes: optionalFilled(z.string().trim().max(500)),
 }
 
 export const createVendorSchema = z.object(createVendorFields)
@@ -173,6 +179,8 @@ export const updateVendorSchema = z
     gallery: vendorGallerySchema.optional(),
     status: vendorStatusSchema.optional(),
     featured: z.boolean().optional(),
+    vipExpiresAt: z.string().datetime({ offset: true }).nullable().optional(),
+    vipNotes: z.string().trim().max(500).nullable().optional(),
   })
   .refine(
     (payload) =>
@@ -189,7 +197,9 @@ export const updateVendorSchema = z
       payload.paymentMethods !== undefined ||
       payload.gallery !== undefined ||
       payload.status !== undefined ||
-      payload.featured !== undefined,
+      payload.featured !== undefined ||
+      payload.vipExpiresAt !== undefined ||
+      payload.vipNotes !== undefined,
     { message: 'No hay cambios que guardar.' }
   )
 
@@ -217,6 +227,7 @@ export function parseUpdateVendor(body: unknown) {
 }
 
 export const publicVendorCardSchema = z.object({
+  id: z.string().uuid().optional(),
   slug: vendorSlugSchema,
   name: vendorNameSchema,
   category: vendorCategorySchema,

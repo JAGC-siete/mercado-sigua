@@ -38,6 +38,8 @@ export type VendorRow = {
   auth_user_id?: string | null
   claimed_at?: string | null
   featured: boolean
+  vip_expires_at?: string | null
+  vip_notes?: string | null
   products: string[] | null
   payment_methods: string[] | null
   gallery: unknown
@@ -52,7 +54,7 @@ export const VENDOR_ANON_COLUMNS =
 export const VENDOR_PUBLIC_COLUMNS = VENDOR_ANON_COLUMNS
 
 export const VENDOR_ADMIN_COLUMNS =
-  'id, application_id, name, slug, description, category, whatsapp, status, logo_url, stall_location, hours_note, contact_email, auth_user_id, claimed_at, featured, products, payment_methods, gallery, created_at, updated_at'
+  'id, application_id, name, slug, description, category, whatsapp, status, logo_url, stall_location, hours_note, contact_email, auth_user_id, claimed_at, featured, vip_expires_at, vip_notes, products, payment_methods, gallery, created_at, updated_at'
 
 export const MERCADO_ISR_REVALIDATE_SECONDS = 60
 
@@ -80,6 +82,7 @@ export function vendorRowToPublicCard(row: VendorRow): PublicVendorCard | null {
   if (!isVendorCategory(row.category)) return null
   const products = (row.products ?? []).map((p) => p.trim()).filter(Boolean).slice(0, 5)
   return {
+    id: row.id,
     slug: row.slug,
     name: row.name,
     category: row.category,
@@ -241,6 +244,8 @@ export function publicCardToInsert(payload: {
   gallery: PublicVendorCard['gallery']
   status: VendorStatus
   featured: boolean
+  vipExpiresAt?: string | null
+  vipNotes?: string | null
   applicationId?: string | null
   userId?: string | null
 }) {
@@ -261,6 +266,8 @@ export function publicCardToInsert(payload: {
     gallery: payload.gallery,
     status: payload.status,
     featured: payload.featured,
+    vip_expires_at: payload.featured ? payload.vipExpiresAt ?? null : null,
+    vip_notes: payload.vipNotes?.trim() ? payload.vipNotes.trim().slice(0, 500) : null,
     application_id: payload.applicationId ?? null,
     created_by: payload.userId ?? null,
     updated_by: payload.userId ?? null,

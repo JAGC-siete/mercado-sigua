@@ -18,11 +18,17 @@ import {
 import { PRIVACY_PUBLIC_PATH, TERMS_PUBLIC_PATH } from '../../lib/marketing/legal-paths'
 import styles from './mercado.module.css'
 
-const ADMIN_HELP_HREF = `https://wa.me/${vendorWhatsAppDigits(MERCADO_DIRECTORY_WHATSAPP)}?text=${encodeURIComponent(
-  'Hola, soy locatario del Mercado San Pablo y necesito ayuda con el directorio Pickup.'
-)}`
+export default function MercadoFooter({
+  hoursRows = MERCADO_HOURS_ROWS,
+  supportWhatsapp = MERCADO_DIRECTORY_WHATSAPP,
+}: {
+  hoursRows?: Array<{ days: string; hours: string }>
+  supportWhatsapp?: string
+}) {
+  const adminHelpHref = `https://wa.me/${vendorWhatsAppDigits(supportWhatsapp)}?text=${encodeURIComponent(
+    'Hola, soy locatario del Mercado San Pablo y necesito ayuda con el directorio Pickup.'
+  )}`
 
-export default function MercadoFooter() {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerGrid}>
@@ -31,7 +37,7 @@ export default function MercadoFooter() {
           <table className={styles.hoursTable}>
             <caption className="sr-only">Horario oficial del Mercado Municipal San Pablo</caption>
             <tbody>
-              {MERCADO_HOURS_ROWS.map((row) => (
+              {hoursRows.map((row) => (
                 <tr key={row.days}>
                   <th scope="row">{row.days}</th>
                   <td>{row.hours}</td>
@@ -65,7 +71,7 @@ export default function MercadoFooter() {
               <Link href={mercadoInscriptionPath()}>Inscribir mi puesto</Link>
             </li>
             <li>
-              <a href={ADMIN_HELP_HREF} target="_blank" rel="noopener noreferrer">
+              <a href={adminHelpHref} target="_blank" rel="noopener noreferrer">
                 Ayuda por WhatsApp (administración)
               </a>
             </li>
