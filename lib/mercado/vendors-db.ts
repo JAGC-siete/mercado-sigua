@@ -34,6 +34,9 @@ export type VendorRow = {
   logo_url: string | null
   stall_location: string | null
   hours_note: string | null
+  contact_email?: string | null
+  auth_user_id?: string | null
+  claimed_at?: string | null
   featured: boolean
   products: string[] | null
   payment_methods: string[] | null
@@ -49,7 +52,7 @@ export const VENDOR_ANON_COLUMNS =
 export const VENDOR_PUBLIC_COLUMNS = VENDOR_ANON_COLUMNS
 
 export const VENDOR_ADMIN_COLUMNS =
-  'id, application_id, name, slug, description, category, whatsapp, status, logo_url, stall_location, hours_note, featured, products, payment_methods, gallery, created_at, updated_at'
+  'id, application_id, name, slug, description, category, whatsapp, status, logo_url, stall_location, hours_note, contact_email, auth_user_id, claimed_at, featured, products, payment_methods, gallery, created_at, updated_at'
 
 export const MERCADO_ISR_REVALIDATE_SECONDS = 60
 
@@ -229,6 +232,7 @@ export function publicCardToInsert(payload: {
   description: string
   category: VendorCategory
   whatsapp: string
+  contactEmail?: string | null
   logoUrl?: string | null
   stallLocation?: string | null
   hoursNote?: string | null
@@ -246,6 +250,9 @@ export function publicCardToInsert(payload: {
     description: payload.description,
     category: payload.category,
     whatsapp: payload.whatsapp,
+    contact_email: payload.contactEmail
+      ? payload.contactEmail.trim().toLowerCase()
+      : null,
     logo_url: payload.logoUrl ?? null,
     stall_location: payload.stallLocation ?? null,
     hours_note: payload.hoursNote ?? null,

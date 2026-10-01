@@ -6,7 +6,7 @@ import MercadoAdminShell from '../../../components/mercado/MercadoAdminShell'
 import { Badge } from '../../../components/ui/badge'
 import { Button } from '../../../components/ui/button'
 import { Card, CardContent } from '../../../components/ui/card'
-import { requireMercadoAdminPage } from '../../../lib/mercado/admin-auth'
+import { requireSuperAdminPage } from '../../../lib/auth/page-auth'
 import {
   mercadoPresencePlanAdminLabel,
   type MercadoPresencePlan,
@@ -53,9 +53,9 @@ function statusClass(status: VendorApplicationStatus): string {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const auth = await requireMercadoAdminPage(ctx)
+  const auth = await requireSuperAdminPage(ctx)
   if (!auth.ok) return { redirect: auth.redirect }
-  return { props: { operatorEmail: auth.operator.email } }
+  return { props: { operatorEmail: auth.email ?? '' } }
 }
 
 export default function MercadoSolicitudesPage({ operatorEmail }: { operatorEmail: string }) {

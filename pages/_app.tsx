@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app'
 import { Montserrat } from 'next/font/google'
+import SessionIdleGuard from '../components/mercado/SessionIdleGuard'
 import { cn } from '../lib/utils'
 import '../styles/globals.css'
 
@@ -14,6 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div className={cn(montserrat.variable, 'min-h-screen font-sans')}>
       <Component {...pageProps} />
+      <SessionIdleGuard />
     </div>
   )
 }

@@ -60,6 +60,13 @@ export const vendorWhatsappSchema = z
     message: 'Incluye un número real de teléfono o WhatsApp.',
   })
 
+export const vendorContactEmailSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .email('Incluí un correo válido para el login del locatario.')
+  .max(160, 'El correo no puede pasar de 160 caracteres.')
+
 /** https absoluta o ruta interna. Bloquea javascript:, data:, http. */
 export const vendorLogoUrlSchema = z
   .string()
@@ -131,6 +138,7 @@ const createVendorFields = {
   category: vendorCategorySchema,
   description: vendorDescriptionSchema,
   whatsapp: vendorWhatsappSchema,
+  contactEmail: optionalFilled(vendorContactEmailSchema),
   logoUrl: optionalFilled(vendorLogoUrlSchema),
   stallLocation: optionalFilled(vendorStallLocationSchema),
   hoursNote: optionalFilled(vendorHoursNoteSchema),
@@ -156,6 +164,7 @@ export const updateVendorSchema = z
     category: vendorCategorySchema.optional(),
     description: vendorDescriptionSchema.optional(),
     whatsapp: vendorWhatsappSchema.optional(),
+    contactEmail: vendorContactEmailSchema.nullable().optional(),
     logoUrl: vendorLogoUrlSchema.nullable().optional(),
     stallLocation: vendorStallLocationSchema.nullable().optional(),
     hoursNote: vendorHoursNoteSchema.nullable().optional(),
@@ -172,6 +181,7 @@ export const updateVendorSchema = z
       payload.category !== undefined ||
       payload.description !== undefined ||
       payload.whatsapp !== undefined ||
+      payload.contactEmail !== undefined ||
       payload.logoUrl !== undefined ||
       payload.stallLocation !== undefined ||
       payload.hoursNote !== undefined ||

@@ -2,11 +2,17 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import {
-  MERCADO_ADMIN_LOGOUT_API_PATH,
+  APP_LOGIN_PATH,
+  AUTH_LOGOUT_API_PATH,
   mercadoAdminListPath,
   mercadoApplicationsAdminPath,
   mercadoHomePath,
 } from '../../lib/mercado/paths'
+import {
+  LOCAL_STORAGE_SESSION_KEY,
+  LOCAL_STORAGE_USER_KEY,
+} from '../../lib/auth/session-manager'
+import { createBrowserSupabaseClient } from '../../lib/supabase/browser'
 
 export default function MercadoAdminShell({
   operatorEmail,
@@ -18,8 +24,14 @@ export default function MercadoAdminShell({
   const router = useRouter()
 
   async function logout() {
-    await fetch(MERCADO_ADMIN_LOGOUT_API_PATH, { method: 'POST', credentials: 'include' })
-    void router.push('/app/mercado/login')
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_USER_KEY)
+      localStorage.removeItem(LOCAL_STORAGE_SESSION_KEY)
+      await createBrowserSupabaseClient().auth.signOut()
+      await fetch(AUTH_LOGOUT_API_PATH, { method: 'POST', credentials: 'include' })
+    } finally {
+      void router.push(APP_LOGIN_PATH)
+    }
   }
 
   return (

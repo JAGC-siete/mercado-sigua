@@ -6,7 +6,7 @@ import MercadoAdminShell from '../../../../components/mercado/MercadoAdminShell'
 import { Badge } from '../../../../components/ui/badge'
 import { Button } from '../../../../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card'
-import { requireMercadoAdminPage } from '../../../../lib/mercado/admin-auth'
+import { requireSuperAdminPage } from '../../../../lib/auth/page-auth'
 import {
   VENDOR_CATEGORIES,
   VENDOR_CATEGORY_LABEL,
@@ -31,9 +31,9 @@ function StatusBadge({ status }: { status: VendorStatus }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const auth = await requireMercadoAdminPage(ctx)
+  const auth = await requireSuperAdminPage(ctx)
   if (!auth.ok) return { redirect: auth.redirect }
-  return { props: { operatorEmail: auth.operator.email } }
+  return { props: { operatorEmail: auth.email ?? '' } }
 }
 
 export default function MercadoFichasAdminPage({ operatorEmail }: { operatorEmail: string }) {

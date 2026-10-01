@@ -5,11 +5,13 @@ import { useRouter } from 'next/router'
 import type { GetServerSideProps } from 'next'
 import MercadoAdminShell from '../../../../components/mercado/MercadoAdminShell'
 import VendorForm, { type VendorFormValues } from '../../../../components/mercado/VendorForm'
+import { Button } from '../../../../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card'
-import { requireMercadoAdminPage } from '../../../../lib/mercado/admin-auth'
+import { requireSuperAdminPage } from '../../../../lib/auth/page-auth'
 import { isVendorCategory } from '../../../../lib/mercado/categories'
 import {
   MERCADO_VENDORS_API_PATH,
+  MERCADO_VENDORS_INVITE_API_PATH,
   mercadoAdminListPath,
 } from '../../../../lib/mercado/paths'
 import { DEFAULT_VENDOR_PAYMENT_METHODS, type CreateVendorPayload, type VendorPaymentMethod, type VendorStatus } from '../../../../lib/mercado/schema'
@@ -29,6 +31,7 @@ function rowToFormValues(row: VendorRow): VendorFormValues {
     category: isVendorCategory(row.category) ? row.category : '',
     description: row.description,
     whatsapp: row.whatsapp,
+    contactEmail: row.contact_email || '',
     logoUrl: row.logo_url || '',
     facadeUrl: facade,
     stallLocation: row.stall_location || '',
@@ -41,18 +44,21 @@ function rowToFormValues(row: VendorRow): VendorFormValues {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const auth = await requireMercadoAdminPage(ctx)
+  const auth = await requireSuperAdminPage(ctx)
   if (!auth.ok) return { redirect: auth.redirect }
-  return { props: { operatorEmail: auth.operator.email } }
+  return { props: { operatorEmail: auth.email ?? '' } }
 }
 
 export default function MercadoFichaEditPage({ operatorEmail }: { operatorEmail: string }) {
   const router = useRouter()
   const id = typeof router.query.id === 'string' ? router.query.id : ''
   const [busy, setBusy] = useState(false)
+  const [inviting, setInviting] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [inviteMsg, setInviteMsg] = useState<string | null>(null)
   const [initial, setInitial] = useState<VendorFormValues | null>(null)
+  const [claimed, setClaimed] = useState(false)
 
   const load = useCallback(async () => {
     if (!id) return
@@ -68,6 +74,7 @@ export default function MercadoFichaEditPage({ operatorEmail }: { operatorEmail:
       const vendor = body.vendors?.find((row) => row.id === id)
       if (!vendor) throw new Error('Ficha no encontrada')
       setInitial(rowToFormValues(vendor))
+      setClaimed(Boolean(vendor.auth_user_id))
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error')
       setInitial(null)
@@ -101,6 +108,28 @@ export default function MercadoFichaEditPage({ operatorEmail }: { operatorEmail:
     }
   }
 
+  async function inviteLocatario() {
+    if (!id) return
+    setInviting(true)
+    setInviteMsg(null)
+    setError(null)
+    try {
+      const res = await fetch(MERCADO_VENDORS_INVITE_API_PATH, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vendorId: id }),
+      })
+      const json = (await res.json().catch(() => ({}))) as { error?: string; message?: string }
+      if (!res.ok) throw new Error(json.error || 'No se pudo invitar')
+      setInviteMsg(json.message || 'Invitación enviada.')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'No se pudo invitar')
+    } finally {
+      setInviting(false)
+    }
+  }
+
   return (
     <MercadoAdminShell operatorEmail={operatorEmail}>
       <Head>
@@ -118,14 +147,34 @@ export default function MercadoFichaEditPage({ operatorEmail }: { operatorEmail:
           <CardContent>
             {loading ? <p className="text-sm text-gray-300">Cargando…</p> : null}
             {error ? <p className="mb-4 text-sm text-red-400">{error}</p> : null}
+            {inviteMsg ? <p className="mb-4 text-sm text-emerald-400">{inviteMsg}</p> : null}
             {!loading && initial ? (
-              <VendorForm
-                key={id}
-                initialValues={initial}
-                submitLabel="Guardar cambios"
-                busy={busy}
-                onValid={onValid}
-              />
+              <>
+                <div className="mb-4 flex flex-wrap items-center gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={inviting || !initial.contactEmail || claimed}
+                    onClick={() => void inviteLocatario()}
+                  >
+                    {claimed
+                      ? 'Locatario ya vinculado'
+                      : inviting
+                        ? 'Enviando invitación…'
+                        : 'Invitar locatario'}
+                  </Button>
+                  {!initial.contactEmail ? (
+                    <p className="text-xs text-white/50">Guardá un correo de login para poder invitar.</p>
+                  ) : null}
+                </div>
+                <VendorForm
+                  key={id}
+                  initialValues={initial}
+                  submitLabel="Guardar cambios"
+                  busy={busy}
+                  onValid={onValid}
+                />
+              </>
             ) : null}
           </CardContent>
         </Card>

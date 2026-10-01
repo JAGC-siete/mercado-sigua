@@ -1,7 +1,7 @@
 /**
- * Login mínimo del operador del directorio municipal.
- * No usa SuperAdmin de RRHH ni el tenant leads.id de la suite.
- * Cookie HMAC + email/password de env. Escrituras van por service role.
+ * Residuo del corte HMAC (`mercado_op`).
+ * Auth viva: JWT + `requireSuperAdmin` / `requireSuperAdminPage` en `lib/auth/*`.
+ * Se conserva clear cookie para logout de transición.
  */
 
 import { createHmac, timingSafeEqual } from 'crypto'
@@ -108,10 +108,14 @@ export function mercadoAdminSetCookie(res: NextApiResponse, operator: MercadoOpe
 
 export function mercadoAdminClearCookie(res: NextApiResponse) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : ''
-  res.setHeader(
-    'Set-Cookie',
-    `${MERCADO_ADMIN_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`
-  )
+  const cleared = `${MERCADO_ADMIN_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`
+  const existing = res.getHeader('Set-Cookie')
+  const prev = Array.isArray(existing)
+    ? existing.map(String)
+    : existing
+      ? [String(existing)]
+      : []
+  res.setHeader('Set-Cookie', [...prev, cleared])
 }
 
 export function requireMercadoAdminApi(

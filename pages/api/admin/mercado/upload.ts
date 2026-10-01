@@ -1,11 +1,11 @@
 /**
  * Upload de logo / fachada al bucket mercado-san-pablo.
- * JSON { kind, contentType, dataBase64 }. Cookie de operador + service role.
+ * JSON { kind, contentType, dataBase64 }. JWT super_admin + service role.
  */
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { randomUUID } from 'crypto'
-import { requireMercadoAdminApi } from '../../../../lib/mercado/admin-auth'
+import { requireSuperAdmin } from '../../../../lib/auth/api-auth'
 import { logger } from '../../../../lib/logger'
 import { MERCADO_STORAGE_BUCKET } from '../../../../lib/mercado/paths'
 import { createMercadoAdminClient } from '../../../../lib/mercado/vendors-db'
@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Método no permitido' })
   }
 
-  const operator = requireMercadoAdminApi(req, res)
+  const operator = await requireSuperAdmin(req, res, 'mercado.upload')
   if (!operator) return
 
   const kind = req.body?.kind

@@ -1,11 +1,12 @@
 /**
  * CRUD operador de fichas mercado_vendors.
- * Guard: cookie HMAC del operador municipal. Escritura: service role.
+ * Guard: JWT super_admin. Escritura: service role.
  */
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
-import { requireMercadoAdminApi } from '../../../../lib/mercado/admin-auth'
+import { requireSuperAdmin } from '../../../../lib/auth/api-auth'
+import { normalizeLoginEmail } from '../../../../lib/auth/role-access'
 import { logger } from '../../../../lib/logger'
 import { VENDOR_APPLICATIONS_TABLE } from '../../../../lib/mercado/inscription-schema'
 import {
@@ -41,6 +42,7 @@ const promoteSchema = z.object({
   whatsapp: z.string(),
   stallLocation: z.string().optional(),
   hoursNote: z.string().optional(),
+  contactEmail: z.string().optional(),
   products: z.array(z.string()).optional(),
   paymentMethods: z.array(z.string()).optional(),
   logoUrl: z.string().optional(),
@@ -57,8 +59,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Método no permitido' })
   }
 
-  const operator = requireMercadoAdminApi(req, res)
+  const operator = await requireSuperAdmin(req, res, `mercado.vendors.${req.method}`)
   if (!operator) return
+  const operatorEmail = operator.email || operator.userId
 
   const adminClient = createMercadoAdminClient()
 
@@ -82,7 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'PATCH') {
       const flags = patchFlagsSchema.safeParse(req.body)
       if (flags.success && !('name' in (req.body ?? {})) && !('slug' in (req.body ?? {}))) {
-        const patch: Record<string, unknown> = { updated_by: operator.email }
+        const patch: Record<string, unknown> = { updated_by: operatorEmail }
         if (flags.data.status !== undefined) patch.status = flags.data.status
         if (flags.data.featured !== undefined) patch.featured = flags.data.featured
 
@@ -110,7 +113,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!id) return res.status(400).json({ error: 'Falta id de la ficha.' })
 
       const u = parsed.data
-      const update: Record<string, unknown> = { updated_by: operator.email }
+      const update: Record<string, unknown> = { updated_by: operatorEmail }
       if (u.name !== undefined) update.name = u.name
       if (u.slug !== undefined) update.slug = u.slug
       if (u.category !== undefined) update.category = u.category
@@ -119,6 +122,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (u.logoUrl !== undefined) update.logo_url = u.logoUrl
       if (u.stallLocation !== undefined) update.stall_location = u.stallLocation
       if (u.hoursNote !== undefined) update.hours_note = u.hoursNote
+      if (u.contactEmail !== undefined) {
+        update.contact_email = u.contactEmail
+          ? normalizeLoginEmail(u.contactEmail)
+          : null
+      }
       if (u.products !== undefined) update.products = u.products
       if (u.paymentMethods !== undefined) update.payment_methods = u.paymentMethods
       if (u.gallery !== undefined) update.gallery = u.gallery
@@ -173,6 +181,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         whatsapp: promoted.data.whatsapp,
         stallLocation: promoted.data.stallLocation ?? application.stall_number,
         hoursNote: promoted.data.hoursNote ?? 'Lun–Sáb 6:00–15:00',
+        contactEmail: promoted.data.contactEmail,
         products: promoted.data.products ?? ['Consultar por WhatsApp'],
         paymentMethods: promoted.data.paymentMethods ?? [...DEFAULT_VENDOR_PAYMENT_METHODS],
         logoUrl: promoted.data.logoUrl,
@@ -191,9 +200,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         logoUrl: parsed.data.logoUrl ?? null,
         stallLocation: parsed.data.stallLocation ?? null,
         hoursNote: parsed.data.hoursNote ?? null,
+        contactEmail: parsed.data.contactEmail ?? null,
         gallery: parsed.data.gallery ?? [],
         applicationId: application.id,
-        userId: operator.email,
+        userId: operatorEmail,
       })
 
       const { data: vendor, error: insertErr } = await adminClient
@@ -230,8 +240,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       logoUrl: parsed.data.logoUrl ?? null,
       stallLocation: parsed.data.stallLocation ?? null,
       hoursNote: parsed.data.hoursNote ?? null,
+      contactEmail: parsed.data.contactEmail ?? null,
       gallery: parsed.data.gallery ?? [],
-      userId: operator.email,
+      userId: operatorEmail,
     })
 
     const { data: vendor, error } = await adminClient

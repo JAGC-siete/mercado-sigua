@@ -22,6 +22,7 @@ export interface VendorFormValues {
   category: VendorCategory | ''
   description: string
   whatsapp: string
+  contactEmail: string
   logoUrl: string
   facadeUrl: string
   stallLocation: string
@@ -38,6 +39,7 @@ const EMPTY_VALUES: VendorFormValues = {
   category: '',
   description: '',
   whatsapp: '',
+  contactEmail: '',
   logoUrl: '',
   facadeUrl: '',
   stallLocation: '',
@@ -107,6 +109,7 @@ export default function VendorForm({
       category: values.category,
       description: values.description,
       whatsapp: values.whatsapp,
+      contactEmail: values.contactEmail,
       logoUrl: values.logoUrl,
       stallLocation: values.stallLocation,
       hoursNote: values.hoursNote,
@@ -242,6 +245,26 @@ export default function VendorForm({
           inputMode="tel"
           className={fieldClass}
         />
+      </div>
+
+      <div>
+        <label htmlFor="vendor-contact-email" className="mb-1 block text-sm font-medium text-gray-200">
+          Correo de login del locatario
+        </label>
+        <Input
+          id="vendor-contact-email"
+          type="email"
+          value={values.contactEmail}
+          onChange={(event) =>
+            setValues((current) => ({ ...current, contactEmail: event.target.value }))
+          }
+          placeholder="locatario@ejemplo.com"
+          autoComplete="email"
+          className={fieldClass}
+        />
+        <p className="mt-1 text-xs text-white/50">
+          Con este correo invita al locatario a crear su contraseña.
+        </p>
       </div>
 
       <fieldset>
