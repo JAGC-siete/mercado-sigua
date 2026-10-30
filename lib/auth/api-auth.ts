@@ -21,7 +21,7 @@ export type AuthContext = {
 async function loadProfile(userId: string): Promise<UserProfileRow | null> {
   const admin = createAdminClient()
   const { data, error } = await admin
-    .from('user_profiles')
+    .from('site_user_profiles')
     .select('id, role, is_active, permissions')
     .eq('id', userId)
     .maybeSingle()

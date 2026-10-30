@@ -49,7 +49,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const admin = createAdminClient()
     const { data: profile, error: profileErr } = await admin
-      .from('user_profiles')
+      .from('site_user_profiles')
       .select('id, role, is_active, permissions')
       .eq('id', signIn.user.id)
       .maybeSingle()
