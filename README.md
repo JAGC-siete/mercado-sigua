@@ -30,7 +30,7 @@ Línea de producción: [https://mercado.humanosisu.net/mercadosanpablosigua](htt
 
 ## Login unificado
 
-Un form, un endpoint. Separación: `user_profiles.role` + `mercado_vendors.auth_user_id`.
+Un form, un endpoint. Separación: `site_user_profiles.role` + `mercado_vendors.auth_user_id`.
 
 | Rol | Destino | Notas |
 | --- | --- | --- |
@@ -61,7 +61,7 @@ Este repo no incluye Webycitas, Planilla, `company_id` ni roles HR.
 | Auth | `lib/auth/*`, `lib/supabase/{server,browser,admin}.ts` |
 | Admin | `/app/mercado/*` + JWT `super_admin` |
 | Locatario | `/app` stub + claim de `mercado_vendors` |
-| Tablas | `mercado_vendors`, `mercado_vendor_applications`, `user_profiles`, `user_sessions`, `mercado_site_settings`, `mercado_wa_clicks` |
+| Tablas | `mercado_vendors`, `mercado_vendor_applications`, `site_user_profiles`, `user_sessions`, `mercado_site_settings`, `mercado_wa_clicks` |
 | Storage | bucket `mercado-san-pablo` |
 | Resend | `RESEND_FROM` = marca Mercado San Pablo |
 

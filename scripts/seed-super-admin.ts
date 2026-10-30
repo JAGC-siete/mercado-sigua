@@ -65,7 +65,7 @@ async function main() {
     console.info('Usuario auth existente actualizado:', userId)
   }
 
-  const { error: profileErr } = await admin.from('user_profiles').upsert(
+  const { error: profileErr } = await admin.from('site_user_profiles').upsert(
     {
       id: userId,
       role: 'super_admin',
@@ -75,7 +75,7 @@ async function main() {
     { onConflict: 'id' }
   )
   if (profileErr) {
-    console.error('No se pudo upsert user_profiles:', profileErr.message)
+    console.error('No se pudo upsert site_user_profiles:', profileErr.message)
     process.exit(1)
   }
 

@@ -85,7 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    const { error: profileErr } = await admin.from('user_profiles').upsert(
+    const { error: profileErr } = await admin.from('site_user_profiles').upsert(
       {
         id: userId,
         role: 'vendor',
