@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
       <Head>
-        <title>Recuperar contraseña · Mercado San Pablo</title>
+        <title>Recuperar contraseña · Mercado Digital de Siguatepeque</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <Card variant="glass" className="w-full max-w-md">

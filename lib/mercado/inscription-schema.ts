@@ -1,5 +1,5 @@
 /**
- * Contrato del formulario público de registro de local.
+ * Contrato del formulario público de registro de negocio.
  * Lo comparten el componente y POST /api/mercado/inscriptions.
  * No crea vendor, slug ni ficha: solo una solicitud pendiente de revisión.
  */
@@ -22,7 +22,7 @@ export const MERCADO_PRESENCE_PLANS = ['basic', 'featured_vip'] as const
 export type MercadoPresencePlan = (typeof MERCADO_PRESENCE_PLANS)[number]
 
 export const MERCADO_INSCRIPTION_AUTHORIZATION_TEXT =
-  'Autorizo publicar los datos de mi comercio en la web oficial del Mercado Municipal y confirmo el plan de presencia elegido.'
+  'Autorizo publicar los datos de mi negocio en Mercado Digital de Siguatepeque (sigua-online.com) y confirmo el plan que elegí.'
 
 export const MERCADO_PRESENCE_PLAN_COPY: Record<
   MercadoPresencePlan,
@@ -30,11 +30,11 @@ export const MERCADO_PRESENCE_PLAN_COPY: Record<
 > = {
   basic: {
     title: 'Registro básico',
-    price: 'Gratuito',
+    price: 'Gratis',
   },
   featured_vip: {
-    title: 'Perfil destacado',
-    price: 'Aportación L. 1,500 / año',
+    title: 'Inscripción destacada',
+    price: 'L. 1,500 al año',
   },
 }
 
@@ -68,14 +68,14 @@ export const mercadoInscriptionSchema = z
     businessName: z
       .string()
       .trim()
-      .min(2, 'Escribe el nombre del local.')
-      .max(80, 'El nombre del local no puede pasar de 80 caracteres.'),
+      .min(2, 'Escribe el nombre del negocio.')
+      .max(80, 'El nombre del negocio no puede pasar de 80 caracteres.'),
     whatsapp: vendorWhatsappSchema,
     presencePlan: z.enum(MERCADO_PRESENCE_PLANS, {
-      message: 'Elegí un nivel de presencia.',
+      message: 'Elige un plan: registro básico o inscripción destacada.',
     }),
     authorized: z.literal(true, {
-      message: 'Autorizá la publicación de los datos del comercio para enviar la solicitud.',
+      message: 'Autoriza la publicación de los datos de tu negocio para enviar la solicitud.',
     }),
     /**
      * Honeypot: el formulario lo pinta oculto y una persona nunca lo llena.

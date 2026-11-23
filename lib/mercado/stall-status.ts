@@ -34,10 +34,10 @@ export function stallStatusLabel(
 ) {
   const clock = hondurasClock(now)
   const window = parseHoursWindow(vendor.hoursNote)
-  if (!window) return 'Preguntá en el puesto'
-  if (window.closedSunday && clock.weekdayIndex === 0) return 'Cerrado · volvé mañana temprano'
+  if (!window) return 'Pregunta por WhatsApp'
+  if (window.closedSunday && clock.weekdayIndex === 0) return 'Cerrado · vuelve mañana temprano'
   const open = clock.minutes >= window.startMin && clock.minutes < window.endMin
-  if (!open) return 'Cerrado · volvé temprano'
+  if (!open) return 'Cerrado · vuelve temprano'
   if (vendor.category === 'comida' && clock.minutes >= 10 * 60 && clock.minutes < 15 * 60) {
     return 'Recibiendo pedidos para el almuerzo'
   }

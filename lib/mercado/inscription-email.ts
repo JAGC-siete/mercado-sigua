@@ -1,5 +1,5 @@
 /**
- * Aviso interno cuando un locatario envía una solicitud de registro de local.
+ * Aviso interno cuando un negocio envía una solicitud de registro.
  */
 
 import {
@@ -9,6 +9,7 @@ import {
   wrapLiquidEmail,
 } from '../emails/liquid-layout'
 import { formatDateTimeForHonduras } from '../timezone'
+import { MERCADO_SEO } from './home'
 import { mercadoInscriptionCanonical } from './meta'
 import { mercadoApplicationsAdminPath } from './paths'
 import { mercadoAbsoluteUrl } from './public-url'
@@ -38,15 +39,15 @@ export function buildMercadoInscriptionNotification(params: {
 
   const bodyHtml = [
     liquidParagraph(
-      `Llegó una <strong>solicitud de registro de local</strong> al directorio del Mercado Municipal San Pablo (${escapeHtml(mercadoInscriptionCanonical())}).`
+      `Llegó una <strong>solicitud de registro de negocio</strong> a ${escapeHtml(MERCADO_SEO.name)} (${escapeHtml(mercadoInscriptionCanonical())}).`
     ),
     liquidKeyValueTable([
-      { label: 'Local', value: inscription.businessName, emphasize: true },
+      { label: 'Negocio', value: inscription.businessName, emphasize: true },
       { label: 'Propietario', value: inscription.merchantName },
       { label: 'Puesto / pasillo', value: inscription.stallNumber },
       { label: 'WhatsApp', value: inscription.whatsapp },
       { label: 'Nivel de presencia', value: planLabel },
-      { label: 'Autorización', value: 'Sí · autorizó publicar los datos del comercio' },
+      { label: 'Autorización', value: 'Sí · autorizó publicar los datos del negocio' },
       { label: 'Estado', value: 'Recibida · pendiente de revisión' },
       { label: 'Recibido (HN)', value: formatDateTimeForHonduras(receivedAt) },
     ]),
@@ -56,10 +57,10 @@ export function buildMercadoInscriptionNotification(params: {
   ].join('')
 
   return {
-    subject: `Solicitud de registro de local — ${inscription.businessName} (local ${inscription.stallNumber})`,
+    subject: `Solicitud de registro de negocio — ${inscription.businessName} (${inscription.stallNumber})`,
     html: wrapLiquidEmail({
-      title: 'Solicitud de registro de local',
-      subtitle: 'Mercado Municipal San Pablo',
+      title: 'Solicitud de registro de negocio',
+      subtitle: MERCADO_SEO.name,
       badge: 'Directorio',
       bodyHtml,
       footerNote: 'Aviso automático del formulario público. La solicitud queda pendiente de revisión. VIP no significa pago registrado.',

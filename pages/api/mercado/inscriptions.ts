@@ -1,5 +1,5 @@
 /**
- * Recibe solicitudes de registro de local al directorio /mercadosanpablosigua.
+ * Recibe solicitudes de registro de negocio desde /inscripcion.
  * Sin sesión. No crea vendor ni escribe en leads/sites.
  */
 

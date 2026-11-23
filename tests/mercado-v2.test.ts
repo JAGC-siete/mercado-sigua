@@ -16,7 +16,7 @@ import {
 } from '../lib/mercado/v2'
 
 const v2Files = [
-  'pages/mercadosanpablosiguav2/index.tsx',
+  'pages/mercado-san-pablo.tsx',
   'components/mercado/MercadoV2Shell.tsx',
   'components/mercado/MercadoV2Chrome.tsx',
   'components/mercado/MercadoV2Hero.tsx',
@@ -31,16 +31,22 @@ function v2Source() {
   return v2Files.map((file) => readFileSync(join(process.cwd(), file), 'utf8')).join('\n')
 }
 
-describe('mercado v2: ruta institucional', () => {
-  it('vive en /mercadosanpablosiguav2', () => {
-    assert.equal(mercadoV2HomePath(), '/mercadosanpablosiguav2')
-    assert.equal(isPublicMercadoRoute('/mercadosanpablosiguav2'), true)
-    assert.equal(isReservedVendorSlug('mercadosanpablosiguav2'), true)
+describe('mercado San Pablo: página dentro del directorio', () => {
+  it('vive en /mercado-san-pablo', () => {
+    assert.equal(mercadoV2HomePath(), '/mercado-san-pablo')
+    assert.equal(isPublicMercadoRoute('/mercado-san-pablo'), true)
+    assert.equal(isReservedVendorSlug('mercado-san-pablo'), true)
   })
 
-  it('no pisa el directorio v1', () => {
-    assert.equal(isPublicMercadoRoute('/mercadosanpablosigua'), true)
-    assert.notEqual(mercadoV2HomePath(), '/mercadosanpablosigua')
+  it('no pisa el directorio', () => {
+    assert.notEqual(mercadoV2HomePath(), '/')
+  })
+
+  it('nombra el mercado y no se presenta como página oficial', () => {
+    assert.equal(MERCADO_V2_SEO.name, 'Mercado Municipal San Pablo')
+    const footer = readFileSync(join(process.cwd(), 'components/mercado/MercadoV2Footer.tsx'), 'utf8')
+    assert.equal(/institucional|oficial/i.test(footer), false)
+    assert.match(footer, /mercadoHomePath\(\)/)
   })
 })
 
@@ -90,7 +96,7 @@ describe('mercado v2: visita física, no directorio', () => {
     assert.equal(MERCADO_V2_COPY.findTitle, 'Lo que encontrarás')
     assert.match(MERCADO_V2_STORY.body, /economía de Siguatepeque/)
     assert.equal(/Doña|Don Chepe|El Patio|Lety|Carmen/i.test(MERCADO_V2_STORY.body), false)
-    const page = readFileSync(join(process.cwd(), 'pages/mercadosanpablosiguav2/index.tsx'), 'utf8')
+    const page = readFileSync(join(process.cwd(), 'pages/mercado-san-pablo.tsx'), 'utf8')
     const chrome = readFileSync(join(process.cwd(), 'components/mercado/MercadoV2Chrome.tsx'), 'utf8')
     const css = readFileSync(join(process.cwd(), 'public/mercado/v2.css'), 'utf8')
     const beneficios = page.indexOf('id="beneficios"')
@@ -119,6 +125,6 @@ describe('mercado v2: visita física, no directorio', () => {
       jsonLd.containsPlace.some((place) => /Patio|Marta|Chepe/i.test(place.name)),
       false
     )
-    assert.equal(mercadoV2SitemapEntry().loc, '/mercadosanpablosiguav2')
+    assert.equal(mercadoV2SitemapEntry().loc, '/mercado-san-pablo')
   })
 })

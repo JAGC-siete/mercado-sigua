@@ -46,7 +46,7 @@ export default function MercadoHowItWorks() {
           >
             <div className="flex items-start justify-between gap-3">
               <h2 id={titleId} className={styles.sectionTitle} style={{ fontSize: '1.25rem' }}>
-                Pedí y recogé en 3 pasos
+                Pide y recoge en 3 pasos
               </h2>
               <button
                 ref={closeRef}

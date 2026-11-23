@@ -1,19 +1,18 @@
 /**
- * Landing institucional v2: visita física al Mercado San Pablo.
+ * Página del Mercado Municipal San Pablo (/mercado-san-pablo): visita física al recinto.
  * Sin directorio de puestos, sin WhatsApp de locatario, sin inscripción en el cuerpo.
- * Shell: isPublicTenantLandingRoute (/mercadosanpablosiguav2).
  */
 
 import Head from 'next/head'
 import type { GetServerSideProps } from 'next'
-import MercadoV2Hero from '../../components/mercado/MercadoV2Hero'
-import MercadoV2Shell from '../../components/mercado/MercadoV2Shell'
-import { v2 } from '../../components/mercado/mv2'
-import { MERCADO_GEO, MERCADO_SEO } from '../../lib/mercado/home'
-import { MERCADO_HOURS_ROWS } from '../../lib/mercado/market-hours'
-import { mercadoAssetUrl } from '../../lib/mercado/meta'
-import { mercadoStaticSrc } from '../../lib/mercado/assets'
-import { mercadoV2HomePath } from '../../lib/mercado/paths'
+import MercadoV2Hero from '../components/mercado/MercadoV2Hero'
+import MercadoV2Shell from '../components/mercado/MercadoV2Shell'
+import { v2 } from '../components/mercado/mv2'
+import { MERCADO_GEO, SAN_PABLO_MARKET } from '../lib/mercado/home'
+import { MERCADO_HOURS_ROWS } from '../lib/mercado/market-hours'
+import { mercadoAssetUrl } from '../lib/mercado/meta'
+import { mercadoStaticSrc } from '../lib/mercado/assets'
+import { mercadoV2HomePath } from '../lib/mercado/paths'
 import {
   MERCADO_V2_AREAS,
   MERCADO_V2_BENEFITS,
@@ -23,7 +22,7 @@ import {
   mercadoV2AreasMatching,
   mercadoV2HomeCanonical,
   serializeMercadoV2JsonLd,
-} from '../../lib/mercado/v2'
+} from '../lib/mercado/v2'
 
 type Props = { q: string; publicTenantLanding: true }
 
@@ -118,7 +117,7 @@ export default function MercadoV2HomePage({ q }: Props) {
           </div>
           {areas.length === 0 ? (
             <p className={v2.empty}>
-              No hay un área que coincida con esa búsqueda. Probá con sopa, tomate, carne o ropa.
+              No hay un área que coincida con esa búsqueda. Prueba con sopa, tomate, carne o ropa.
             </p>
           ) : (
             <div className={v2.bento}>
@@ -174,7 +173,7 @@ export default function MercadoV2HomePage({ q }: Props) {
               <h2 className={v2.sectionTitle}>{MERCADO_V2_COPY.visitTitle}</h2>
               <p className={v2.visitBody}>{MERCADO_V2_COPY.visitBody}</p>
               <p className={v2.geo}>{MERCADO_GEO.label}</p>
-              <p className={v2.footerMuted}>{MERCADO_SEO.addressLine}</p>
+              <p className={v2.footerMuted}>{SAN_PABLO_MARKET.addressLine}</p>
               <div className={v2.visitActions}>
                 <a
                   href={MERCADO_GEO.mapsUrl}

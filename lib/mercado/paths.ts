@@ -1,10 +1,15 @@
 /**
- * Rutas del directorio Mercado Municipal San Pablo (Siguatepeque).
- * Público canónico se conserva para el cutover. Admin vive bajo /app/mercado.
+ * Rutas de Mercado Digital de Siguatepeque (sigua-online.com).
+ * Directorio en /, fichas en /negocios/[slug]. Admin vive bajo /app/mercado.
  */
 
-export const MERCADO_PUBLIC_PREFIX = '/mercadosanpablosigua'
-export const MERCADO_V2_PREFIX = '/mercadosanpablosiguav2'
+export const MERCADO_PUBLIC_PREFIX = '/'
+export const MERCADO_VENDOR_PREFIX = '/negocios'
+/** Página del Mercado Municipal San Pablo dentro del directorio. */
+export const MERCADO_V2_PREFIX = '/mercado-san-pablo'
+/** Rutas de la marca anterior: solo existen para redirigir con 301 (ver lib/hosts.ts). */
+export const LEGACY_DIRECTORY_PREFIX = '/mercadosanpablosigua'
+export const LEGACY_SAN_PABLO_PREFIX = '/mercadosanpablosiguav2'
 export const MERCADO_LEGACY_PREFIX = '/mercado'
 export const MERCADO_ADMIN_HOME_PATH = '/app/mercado'
 export const MERCADO_ADMIN_PATH = '/app/mercado/fichas'
@@ -26,7 +31,7 @@ export const MERCADO_ADMIN_SETTINGS_API_PATH = '/api/admin/mercado/settings'
 export const MERCADO_ADMIN_STATS_API_PATH = '/api/admin/mercado/stats'
 export const MERCADO_SITE_PUBLIC_API_PATH = '/api/mercado/site-public'
 export const MERCADO_WA_CLICK_API_PATH = '/api/mercado/wa-click'
-export const MERCADO_INSCRIPTION_PATH = `${MERCADO_PUBLIC_PREFIX}/inscripcion`
+export const MERCADO_INSCRIPTION_PATH = '/inscripcion'
 export const MERCADO_INSCRIPTION_API_PATH = '/api/mercado/inscriptions'
 export const MERCADO_APPLICATIONS_ADMIN_PATH = '/app/mercado/solicitudes'
 export const MERCADO_APPLICATIONS_ADMIN_API_PATH = '/api/admin/mercado/applications'
@@ -45,7 +50,7 @@ export function mercadoV2HomePath(): string {
 }
 
 export function mercadoVendorPath(slug: string): string {
-  return `${MERCADO_PUBLIC_PREFIX}/${slug}`
+  return `${MERCADO_VENDOR_PREFIX}/${slug}`
 }
 
 export function mercadoInscriptionPath(): string {
@@ -97,9 +102,10 @@ export function mercadoAdminLoginPath(next?: string): string {
 
 export function isPublicMercadoRoute(pathname: string): boolean {
   return (
-    matchesPrefix(pathname, MERCADO_PUBLIC_PREFIX) ||
-    matchesPrefix(pathname, MERCADO_V2_PREFIX) ||
-    matchesPrefix(pathname, MERCADO_LEGACY_PREFIX)
+    pathname === MERCADO_PUBLIC_PREFIX ||
+    matchesPrefix(pathname, MERCADO_VENDOR_PREFIX) ||
+    matchesPrefix(pathname, MERCADO_INSCRIPTION_PATH) ||
+    matchesPrefix(pathname, MERCADO_V2_PREFIX)
   )
 }
 

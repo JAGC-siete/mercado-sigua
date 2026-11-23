@@ -2,9 +2,9 @@ import Link from 'next/link'
 import { mercadoInscriptionPath } from '../../lib/mercado/paths'
 import styles from './mercado.module.css'
 
-const CTA_TITLE = '¿Tenés puesto en el mercado?'
+const CTA_TITLE = '¿Tienes un negocio en Siguatepeque?'
 const CTA_BODY =
-  'Pedí el registro de tu local en este directorio. El básico es gratis; el VIP es aportación anual que se coordina después. Recibimos la solicitud y el equipo publica el puesto a mano.'
+  'Inscríbelo en el directorio. El registro básico es gratis; la inscripción destacada cuesta L. 1,500 al año. Revisamos tu solicitud y publicamos la ficha a mano.'
 const CTA_ACTION = 'Solicitar registro'
 
 export function MercadoInscriptionHeaderLink() {
@@ -14,7 +14,7 @@ export function MercadoInscriptionHeaderLink() {
       className="shrink-0 text-sm font-bold underline-offset-4 hover:underline"
       style={{ color: 'var(--mercado-chile)' }}
     >
-      Inscribir mi puesto
+      Inscribir mi negocio
     </Link>
   )
 }
@@ -49,11 +49,11 @@ export function MercadoInscriptionCompactCta() {
       }}
     >
       <h2 className="text-lg font-bold" style={{ color: 'var(--mercado-cacao)' }}>
-        ¿Tu comercio no está en el directorio?
+        ¿Tu negocio no está en el directorio?
       </h2>
       <p className="mt-2 text-sm" style={{ color: 'var(--mercado-muted)' }}>
-        Enviá una solicitud de registro. El básico es gratis; el VIP se coordina aparte. No crea
-        una cuenta y la publicación no es inmediata.
+        Envía una solicitud. El registro básico es gratis; la inscripción destacada cuesta L. 1,500
+        al año. No necesitas crear una cuenta y la publicación no es inmediata.
       </p>
       <Link href={mercadoInscriptionPath()} className={`${styles.ctaSolid} mt-4`}>
         {CTA_ACTION}

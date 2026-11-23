@@ -55,7 +55,7 @@ export default function UpdatePasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
       <Head>
-        <title>Nueva contraseña · Mercado San Pablo</title>
+        <title>Nueva contraseña · Mercado Digital de Siguatepeque</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <Card variant="glass" className="w-full max-w-md">

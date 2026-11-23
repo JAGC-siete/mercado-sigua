@@ -88,7 +88,7 @@ export default function MercadoAdminHomePage({ operatorEmail }: { operatorEmail:
   return (
     <MercadoAdminShell operatorEmail={operatorEmail}>
       <Head>
-        <title>Operador mercado | San Pablo</title>
+        <title>Operador mercado | Mercado Digital</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className="space-y-6 p-6">

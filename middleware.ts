@@ -1,14 +1,16 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
-import { rewritePathForHost } from './lib/hosts'
+import { redirectTargetFor } from './lib/hosts'
 
 export function middleware(req: NextRequest) {
   const host = req.headers.get('host') || ''
-  const nextPath = rewritePathForHost(host, req.nextUrl.pathname)
-  if (!nextPath) return NextResponse.next()
-  const url = req.nextUrl.clone()
-  url.pathname = nextPath
-  return NextResponse.rewrite(url)
+  const target = redirectTargetFor(host, req.nextUrl.pathname)
+  if (!target) return NextResponse.next()
+
+  // Behind Railway's proxy nextUrl may carry the internal origin; build it from the Host header.
+  const proto = req.headers.get('x-forwarded-proto')?.split(',')[0]?.trim() || req.nextUrl.protocol.replace(':', '')
+  const origin = target.origin ?? `${proto}://${host}`
+  return NextResponse.redirect(new URL(`${target.pathname}${req.nextUrl.search}`, origin), 301)
 }
 
 export const config = {

@@ -37,19 +37,19 @@ export default function AppHomePage({ email, role }: Props) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
       <Head>
-        <title>Mi puesto · Mercado San Pablo</title>
+        <title>Mi negocio · Mercado Digital de Siguatepeque</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <Card variant="glass" className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle className="text-lg text-white">Portal del locatario</CardTitle>
+          <CardTitle className="text-lg text-white">Portal de tu negocio</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-sm text-gray-200">
           <p>
             Sesión: <span className="text-white">{email || 'sin correo'}</span> ({role})
           </p>
           <p>
-            El editor del puesto todavía no está disponible aquí. Mientras tanto podés ver el
+            El editor de tu ficha todavía no está disponible aquí. Mientras tanto puedes ver el
             directorio público.
           </p>
           <div className="flex flex-wrap gap-3">
