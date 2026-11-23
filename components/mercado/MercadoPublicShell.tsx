@@ -7,7 +7,7 @@ import MercadoFooter from './MercadoFooter'
 import MercadoHowItWorks from './MercadoHowItWorks'
 import { useMercadoSitePublic } from './useMercadoSitePublic'
 import { marketOpenStatus } from '../../lib/mercado/market-hours'
-import { mercadoHomePath, mercadoInscriptionPath } from '../../lib/mercado/paths'
+import { mercadoHomePath, mercadoInscriptionPath, mercadoV2HomePath } from '../../lib/mercado/paths'
 import { MERCADO_SEO } from '../../lib/mercado/home'
 import styles from './mercado.module.css'
 
@@ -30,9 +30,9 @@ export default function MercadoPublicShell({ children }: { children: ReactNode }
 
   const nav = useMemo(
     () => [
-      { href: homeAnchor('puestos'), label: 'Puestos' },
+      { href: homeAnchor('negocios'), label: 'Negocios' },
       { href: homeAnchor('categorias'), label: 'Categorías' },
-      { href: homeAnchor('ubicacion'), label: 'Ubicación' },
+      { href: mercadoV2HomePath(), label: 'Mercado San Pablo' },
     ],
     []
   )

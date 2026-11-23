@@ -160,7 +160,7 @@ export default function MercadoConfiguracionPage({ operatorEmail }: { operatorEm
   return (
     <MercadoAdminShell operatorEmail={operatorEmail}>
       <Head>
-        <title>Configuración mercado | San Pablo</title>
+        <title>Configuración mercado | Mercado Digital</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className="mx-auto w-full max-w-2xl space-y-6 p-6">

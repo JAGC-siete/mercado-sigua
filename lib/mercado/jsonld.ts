@@ -1,7 +1,14 @@
 import { VENDOR_CATEGORIES, type VendorCategory } from './categories'
-import { MERCADO_GEO, MERCADO_HOME_PREVIEW_VENDORS, MERCADO_SEO } from './home'
+import { MERCADO_GEO, MERCADO_SEO, SAN_PABLO_MARKET } from './home'
 import { mercadoHomeCanonical, mercadoVendorCanonical, mercadoAssetUrl } from './meta'
-import { mercadoCategoryPath, mercadoHomePath, mercadoInscriptionPath, mercadoVendorPath } from './paths'
+import {
+  mercadoCategoryPath,
+  mercadoHomePath,
+  mercadoInscriptionPath,
+  mercadoV2HomePath,
+  mercadoVendorPath,
+} from './paths'
+import { mercadoAbsoluteUrl } from './public-url'
 import { parseHoursWindow } from './stall-status'
 import { vendorWhatsAppDigits } from './whatsapp'
 import type { PublicVendorCard } from './schema'
@@ -65,48 +72,44 @@ export function schemaTelephone(whatsapp: string | null) {
   return undefined
 }
 
+/** @id del ShoppingCenter que publica la página del Mercado San Pablo (lib/mercado/v2.ts). */
 export function mercadoPlaceId() {
-  return `${mercadoHomeCanonical()}#mercado`
+  return `${mercadoAbsoluteUrl(mercadoV2HomePath())}#mercado`
 }
 
 export function vendorPlaceId(slug: string) {
   return `${mercadoVendorCanonical(slug)}#negocio`
 }
 
-export function mercadoShoppingCenterJsonLd(vendors: PublicVendorCard[] = MERCADO_HOME_PREVIEW_VENDORS) {
+/** La home es el directorio de la ciudad: WebSite + lista de negocios, no un ShoppingCenter. */
+export function mercadoDirectoryJsonLd(vendors: PublicVendorCard[]) {
+  const home = mercadoHomeCanonical()
   return {
     '@context': 'https://schema.org',
-    '@type': 'ShoppingCenter',
-    '@id': mercadoPlaceId(),
-    name: MERCADO_SEO.name,
-    description: MERCADO_SEO.description,
-    url: mercadoHomeCanonical(),
-    image: mercadoAssetUrl(MERCADO_SEO.heroImage),
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: 'Mercado Municipal San Pablo, 100 m de Plaza la Amistad',
-      addressLocality: MERCADO_SEO.city,
-      addressRegion: MERCADO_SEO.region,
-      addressCountry: MERCADO_SEO.country,
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: MERCADO_GEO.latitude,
-      longitude: MERCADO_GEO.longitude,
-    },
-    hasMap: MERCADO_GEO.mapsUrl,
-    openingHoursSpecification: openingHoursSpecification('Lun–Sáb 5:30–17:00'),
-    containsPlace: vendors.map((vendor) => ({
-      '@type': vendorSchemaType(vendor.category as VendorCategory),
-      '@id': vendorPlaceId(vendor.slug),
-      name: vendor.name,
-      url: mercadoVendorCanonical(vendor.slug),
-    })),
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': `${home}#sitio`,
+        name: MERCADO_SEO.name,
+        description: MERCADO_SEO.description,
+        url: home,
+        inLanguage: 'es-HN',
+        image: mercadoAssetUrl(MERCADO_SEO.heroImage),
+      },
+      {
+        '@type': 'ItemList',
+        '@id': `${home}#negocios`,
+        name: `Negocios de ${MERCADO_SEO.city}`,
+        itemListElement: vendors.map((vendor, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: vendor.name,
+          url: mercadoVendorCanonical(vendor.slug),
+        })),
+      },
+    ],
   }
 }
-
-/** Alias de arranque: la Home habla ShoppingCenter, no LocalBusiness genérico. */
-export const mercadoLocalBusinessJsonLd = mercadoShoppingCenterJsonLd
 
 export function mercadoVendorJsonLd(vendor: PublicVendorCard) {
   const category = vendor.category as VendorCategory
@@ -126,8 +129,8 @@ export function mercadoVendorJsonLd(vendor: PublicVendorCard) {
     address: {
       '@type': 'PostalAddress',
       streetAddress: vendor.stallLocation
-        ? `Mercado Municipal San Pablo, ${vendor.stallLocation}`
-        : 'Mercado Municipal San Pablo, 100 m de Plaza la Amistad',
+        ? `${SAN_PABLO_MARKET.name}, ${vendor.stallLocation}`
+        : SAN_PABLO_MARKET.streetAddress,
       addressLocality: MERCADO_SEO.city,
       addressRegion: MERCADO_SEO.region,
       addressCountry: MERCADO_SEO.country,
@@ -162,8 +165,8 @@ export function mercadoVendorJsonLd(vendor: PublicVendorCard) {
     containedInPlace: {
       '@type': 'ShoppingCenter',
       '@id': mercadoPlaceId(),
-      name: MERCADO_SEO.name,
-      url: mercadoHomeCanonical(),
+      name: SAN_PABLO_MARKET.name,
+      url: mercadoAbsoluteUrl(mercadoV2HomePath()),
     },
     areaServed: {
       '@type': 'City',
@@ -172,12 +175,9 @@ export function mercadoVendorJsonLd(vendor: PublicVendorCard) {
   }
 }
 
-export function mercadoSitemapUrls(vendorSlugs?: string[]) {
+export function mercadoSitemapUrls(vendorSlugs: string[] = []) {
   const today = new Date().toISOString().split('T')[0]
-  const slugs =
-    vendorSlugs && vendorSlugs.length > 0
-      ? vendorSlugs
-      : MERCADO_HOME_PREVIEW_VENDORS.map((vendor) => vendor.slug)
+  const slugs = vendorSlugs
 
   return [
     {

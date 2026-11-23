@@ -1,16 +1,16 @@
 /**
- * Copy y datos de la landing institucional v2.
+ * Copy y datos de la página del Mercado Municipal San Pablo dentro del directorio.
  * Visita física al recinto. Sin puestos nombrados ni CTA de WhatsApp.
  */
 
-import { MERCADO_GEO, MERCADO_SEO } from './home'
+import { MERCADO_GEO, MERCADO_SEO, SAN_PABLO_MARKET } from './home'
 import { MERCADO_MARKET_HOURS } from './market-hours'
 import { mercadoV2HomePath } from './paths'
 import { mercadoAbsoluteUrl } from './public-url'
 import { mercadoStaticSrc } from './assets'
 
 export const MERCADO_V2_SEO = {
-  name: MERCADO_SEO.name,
+  name: SAN_PABLO_MARKET.name,
   title: 'Mercado Municipal San Pablo | Visita el corazón comercial de Siguatepeque',
   description:
     'Descubre colores, sabores y frescura en el Mercado San Pablo. Frutas, verduras, carnes, comida y abarrotes en el corazón de Siguatepeque.',
@@ -27,19 +27,19 @@ export const MERCADO_V2_COPY = {
   enterCta: 'Entrar al recinto',
   findTitle: 'Lo que encontrarás',
   findBody:
-    'Recorré las áreas del recinto. Cada pasillo junta a muchos locatarios: lo que ves es la oferta del mercado, no un puesto en particular.',
+    'Recorre las áreas del recinto. Cada pasillo junta a muchos locatarios: lo que ves es la oferta del mercado, no un puesto en particular.',
   visitTitle: 'Cómo llegar',
   visitBody: MERCADO_GEO.howToArrive,
   hoursTitle: 'Horario de atención',
   hoursCompact: 'Lun–Sáb 5–4 · Dom 6–12',
   benefitsTitle: 'Por qué venir al mercado',
-  searchTitle: '¿Qué querés encontrar?',
+  searchTitle: '¿Qué quieres encontrar?',
   searchPlaceholder: 'Ej. sopa, tomate, carne',
   searchHint: 'Te indicamos el pasillo o el área. La compra se hace en el recinto.',
   discover: 'Descubrir',
   catalogClear: 'Ver todo el recinto',
   mapsCta: 'Ver cómo llegar',
-  hoursCta: 'Conocé nuestros horarios',
+  hoursCta: 'Conoce los horarios',
   locatariosPortal: 'Portal para locatarios',
 } as const
 
@@ -182,7 +182,7 @@ export const MERCADO_V2_BENEFITS: MercadoV2Benefit[] = [
   },
   {
     title: 'Precios de recinto',
-    body: 'Variedad de puestos en el mismo pasillo. Comparás y llevás al precio del mercado.',
+    body: 'Variedad de puestos en el mismo pasillo. Comparas y llevas al precio del mercado.',
     mark: '02',
   },
   {
@@ -249,13 +249,13 @@ export function mercadoV2JsonLd() {
     '@context': 'https://schema.org',
     '@type': 'ShoppingCenter',
     '@id': `${mercadoV2HomeCanonical()}#mercado`,
-    name: MERCADO_SEO.name,
+    name: SAN_PABLO_MARKET.name,
     description: MERCADO_V2_SEO.description,
     url: mercadoV2HomeCanonical(),
     image: mercadoAbsoluteUrl(mercadoStaticSrc(MERCADO_V2_SEO.heroImage)),
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Mercado Municipal San Pablo, 100 m de Plaza la Amistad',
+      streetAddress: SAN_PABLO_MARKET.streetAddress,
       addressLocality: MERCADO_SEO.city,
       addressRegion: MERCADO_SEO.region,
       addressCountry: MERCADO_SEO.country,

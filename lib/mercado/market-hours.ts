@@ -95,7 +95,7 @@ export function marketOpenStatus(now = new Date(), options?: MarketOpenOptions):
   if (options?.forceClosed) {
     return {
       open: false,
-      label: 'Mercado cerrado ahora',
+      label: 'Mercado San Pablo cerrado ahora',
       day,
     }
   }
@@ -105,14 +105,14 @@ export function marketOpenStatus(now = new Date(), options?: MarketOpenOptions):
   if (open) {
     return {
       open: true,
-      label: `Mercado abierto · Cierra a las ${formatCloseHint(hours.closeMin)}`,
+      label: `Mercado San Pablo abierto · Cierra a las ${formatCloseHint(hours.closeMin)}`,
       day,
     }
   }
 
   return {
     open: false,
-    label: 'Mercado cerrado ahora',
+    label: 'Mercado San Pablo cerrado ahora',
     day,
   }
 }

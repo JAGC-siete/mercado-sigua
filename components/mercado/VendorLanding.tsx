@@ -4,7 +4,7 @@ import { MercadoInscriptionCompactCta } from './InscriptionCta'
 import VendorWhatsAppButton from './VendorWhatsAppButton'
 import { vendorBuySteps } from '../../lib/mercado/buy-flow'
 import { VENDOR_CATEGORY_LABEL, type VendorCategory } from '../../lib/mercado/categories'
-import { MERCADO_SEO } from '../../lib/mercado/home'
+import { SAN_PABLO_MARKET } from '../../lib/mercado/home'
 import { VENDOR_PAYMENT_METHOD_HINT, VENDOR_PAYMENT_METHOD_LABEL } from '../../lib/mercado/payments'
 import { mercadoHomePath } from '../../lib/mercado/paths'
 import { mercadoStaticSrc } from '../../lib/mercado/assets'
@@ -69,7 +69,7 @@ export default function VendorLanding({ vendor }: { vendor: PublicVendorCard }) 
       <div className="mt-8">
         <VendorWhatsAppButton vendor={vendor} size="hero" />
         <p className="mt-3 text-sm text-stone-500">
-          Reservá por WhatsApp, confirmá el pedido y recogé en el puesto.
+          Reserva por WhatsApp, confirma el pedido y recoge en el negocio.
         </p>
       </div>
 
@@ -107,7 +107,7 @@ export default function VendorLanding({ vendor }: { vendor: PublicVendorCard }) 
             <MapPin className="h-4 w-4" aria-hidden />
             Ubicación en el mercado
           </dt>
-          <dd className="mt-1 text-stone-900">{vendor.stallLocation ?? MERCADO_SEO.addressLine}</dd>
+          <dd className="mt-1 text-stone-900">{vendor.stallLocation ?? SAN_PABLO_MARKET.addressLine}</dd>
         </div>
         <div className="rounded-xl border border-stone-200 bg-white p-5">
           <dt className="text-sm font-medium text-stone-500">Horario</dt>

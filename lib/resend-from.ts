@@ -1,5 +1,5 @@
 export function getResendFrom(): string {
-  return process.env.RESEND_FROM || 'Mercado San Pablo <noreply@localhost>'
+  return process.env.RESEND_FROM || 'Mercado Digital de Siguatepeque <noreply@localhost>'
 }
 
 export function getNotifyEmail(): string | null {

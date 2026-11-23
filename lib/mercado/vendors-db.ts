@@ -13,11 +13,6 @@ import {
   type VendorPaymentMethod,
   type VendorStatus,
 } from './schema'
-import {
-  MERCADO_HOME_PREVIEW_VENDORS,
-  findPreviewVendor,
-  previewVendorsByCategory,
-} from './home'
 import type { VendorCategory } from './categories'
 import { isVendorCategory } from './categories'
 import { createPublicMercadoClient } from './public-client'
@@ -202,31 +197,19 @@ export async function findActiveVendorFromDb(slug: string): Promise<PublicVendor
   }
 }
 
-/** DB si count > 0; si no, preview hardcodeado. */
+/** Solo fichas reales. Sin filas, la página pinta el estado vacío (no hay datos de ejemplo). */
 export async function resolvePublicVendors(category?: VendorCategory | null): Promise<{
   vendors: PublicVendorCard[]
-  source: 'database' | 'preview'
 }> {
-  const activeCount = await countActiveVendorsFromDb()
-  if (activeCount === 0) {
-    return { vendors: previewVendorsByCategory(category), source: 'preview' }
-  }
   const fromDb = await listActiveVendorsFromDb()
   const filtered = category ? fromDb.filter((v) => v.category === category) : fromDb
-  return { vendors: filtered, source: 'database' }
+  return { vendors: filtered }
 }
 
 export async function resolvePublicVendor(slug: string): Promise<{
   vendor: PublicVendorCard | null
-  source: 'database' | 'preview'
 }> {
-  const activeCount = await countActiveVendorsFromDb()
-  if (activeCount === 0) {
-    return { vendor: findPreviewVendor(slug), source: 'preview' }
-  }
-
-  const fromDb = await findActiveVendorFromDb(slug)
-  return { vendor: fromDb, source: 'database' }
+  return { vendor: await findActiveVendorFromDb(slug) }
 }
 
 export function publicCardToInsert(payload: {
@@ -279,6 +262,3 @@ export function createMercadoAdminClient() {
   return createAdminClient()
 }
 
-export function previewVendorSlugs(): string[] {
-  return MERCADO_HOME_PREVIEW_VENDORS.map((v) => v.slug)
-}

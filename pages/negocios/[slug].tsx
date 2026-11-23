@@ -1,13 +1,13 @@
 /**
- * Perfil público de un puesto. ISR para SEO + CDN.
- * Shell: isPublicTenantLandingRoute (/mercadosanpablosigua/[slug]).
- * DB primero; preview hardcodeado si no hay fichas activas.
+ * Ficha pública de un negocio (/negocios/[slug]). ISR para SEO + CDN.
+ * Solo fichas activas de la base; si no existe, 404.
  */
 
 import Head from 'next/head'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import MercadoPublicShell from '../../components/mercado/MercadoPublicShell'
 import VendorLanding from '../../components/mercado/VendorLanding'
+import { MERCADO_SEO } from '../../lib/mercado/home'
 import { mercadoVendorJsonLd, serializeJsonLd } from '../../lib/mercado/jsonld'
 import {
   mercadoAssetUrl,
@@ -19,7 +19,6 @@ import type { PublicVendorCard } from '../../lib/mercado/schema'
 import {
   MERCADO_ISR_REVALIDATE_SECONDS,
   listActiveVendorSlugsFromDb,
-  previewVendorSlugs,
   resolvePublicVendor,
 } from '../../lib/mercado/vendors-db'
 
@@ -44,6 +43,7 @@ export default function MercadoVendorProfilePage({ vendor }: VendorProfileProps)
         <link rel="canonical" href={canonical} />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="es_HN" />
+        <meta property="og:site_name" content={MERCADO_SEO.name} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={canonical} />
@@ -68,8 +68,7 @@ export default function MercadoVendorProfilePage({ vendor }: VendorProfileProps)
 const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const dbSlugs = await listActiveVendorSlugsFromDb()
-  const slugs = dbSlugs.length > 0 ? dbSlugs : previewVendorSlugs()
+  const slugs = await listActiveVendorSlugsFromDb()
 
   return {
     paths: slugs.map((slug) => ({ params: { slug } })),

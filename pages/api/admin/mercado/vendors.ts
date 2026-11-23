@@ -234,7 +234,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         category: promoted.data.category ?? 'otros',
         description:
           promoted.data.description ??
-          `${name} en el Mercado Municipal San Pablo. Pedí por WhatsApp y recogé en el local.`,
+          `${name} en Siguatepeque. Pide por WhatsApp y recoge sin hacer fila.`,
         whatsapp: promoted.data.whatsapp,
         stallLocation: promoted.data.stallLocation ?? application.stall_number,
         hoursNote: promoted.data.hoursNote ?? 'Lun–Sáb 6:00–15:00',

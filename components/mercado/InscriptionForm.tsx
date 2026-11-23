@@ -1,5 +1,5 @@
 /**
- * Formulario público: Solicitud de registro de local en página web.
+ * Formulario público: solicitud de registro de negocio.
  * Validación Zod compartida con el endpoint. Sin cuenta, sin cobro en línea, sin publicación automática.
  */
 
@@ -84,16 +84,16 @@ export default function InscriptionForm() {
       <div className={styles.inscriptionSuccess} role="status">
         <h2>Solicitud recibida</h2>
         <p>
-          Recibimos tu solicitud de registro. Queda pendiente de revisión: la publicación no es
-          inmediata y el directorio no cambia hasta el alta a mano.
+          Recibimos tu solicitud. La revisamos a mano, así que tu negocio no aparece de inmediato
+          en el directorio.
         </p>
         {sentPlan === 'featured_vip' ? (
           <p>
-            Elegiste el perfil destacado. La aportación anual (L. 1,500) y el sticker se
-            coordinan aparte. Este envío no registra un pago.
+            Elegiste la inscripción destacada (L. 1,500 al año). El pago lo coordinamos contigo
+            aparte; este formulario no cobra nada.
           </p>
         ) : (
-          <p>Elegiste el registro básico, sin aportación.</p>
+          <p>Elegiste el registro básico, que es gratis.</p>
         )}
       </div>
     )
@@ -109,18 +109,18 @@ export default function InscriptionForm() {
   return (
     <form onSubmit={onSubmit} noValidate className={styles.inscriptionForm}>
       <section className={styles.inscriptionSection} aria-labelledby={`${formId}-datos`}>
-        <h2 id={`${formId}-datos`}>1. Datos del comercio</h2>
+        <h2 id={`${formId}-datos`}>1. Datos del negocio</h2>
 
         <div>
           <label htmlFor={`${formId}-business`} className={styles.inscriptionLabel}>
-            Nombre del local
+            Nombre del negocio
           </label>
           <input
             id={`${formId}-business`}
             name="businessName"
             value={businessName}
             onChange={(event) => setBusinessName(event.target.value)}
-            placeholder="Cómo querés que aparezca el puesto"
+            placeholder="Nombre que verán tus clientes"
             autoComplete="organization"
             className={fieldClass}
             style={fieldStyle}
@@ -168,7 +168,7 @@ export default function InscriptionForm() {
             name="merchantName"
             value={merchantName}
             onChange={(event) => setMerchantName(event.target.value)}
-            placeholder="Quién es dueño del puesto"
+            placeholder="Quién es dueño del negocio"
             autoComplete="name"
             className={fieldClass}
             style={fieldStyle}
@@ -211,8 +211,8 @@ export default function InscriptionForm() {
       </section>
 
       <fieldset className={styles.inscriptionSection} aria-describedby={errors.presencePlan ? planErrorId : undefined}>
-        <legend id={`${formId}-plan`}>2. Nivel de presencia</legend>
-        <p className={styles.inscriptionHint}>Elegí exactamente una opción. El VIP no se cobra en este envío.</p>
+        <legend id={`${formId}-plan`}>2. Plan</legend>
+        <p className={styles.inscriptionHint}>Elige una opción. Este formulario no cobra nada.</p>
         <div className={styles.planGrid} role="radiogroup" aria-labelledby={`${formId}-plan`} aria-required="true">
           {MERCADO_PRESENCE_PLANS.map((plan) => {
             const copy = MERCADO_PRESENCE_PLAN_COPY[plan]

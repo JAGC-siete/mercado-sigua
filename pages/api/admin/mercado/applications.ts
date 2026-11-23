@@ -1,5 +1,5 @@
 /**
- * Bandeja de solicitudes /mercadosanpablosigua/inscripcion.
+ * Bandeja de solicitudes de /inscripcion.
  * Lee mercado_vendor_applications. No toca leads ni sites.
  */
 

@@ -18,7 +18,7 @@ export const VENDOR_TITLE_HOOK: Record<VendorCategory, string> = {
   calzado: 'Calzado',
   artesanias: 'Artesanías',
   servicios: 'Servicios',
-  otros: 'Puesto',
+  otros: 'Negocio local',
 }
 
 export function clampMetaDescription(text: string, max = META_MAX) {
@@ -36,16 +36,16 @@ export function mercadoHomeDescription() {
 }
 
 export function mercadoCategoryTitle(category: VendorCategory) {
-  return `${VENDOR_CATEGORY_LABEL[category]} en Mercado San Pablo, Siguatepeque`
+  return `${VENDOR_CATEGORY_LABEL[category]} en Siguatepeque | ${MERCADO_SEO.name}`
 }
 
 export function mercadoVendorTitle(vendor: Pick<PublicVendorCard, 'name' | 'category'>) {
-  const hook = VENDOR_TITLE_HOOK[vendor.category as VendorCategory] ?? 'Puesto'
-  return `${vendor.name} - ${hook} en Mercado San Pablo, Siguatepeque`
+  const hook = VENDOR_TITLE_HOOK[vendor.category as VendorCategory] ?? 'Negocio local'
+  return `${vendor.name} - ${hook} en Siguatepeque | ${MERCADO_SEO.name}`
 }
 
 export function mercadoVendorDescription(vendor: Pick<PublicVendorCard, 'description'>) {
-  return clampMetaDescription(`${vendor.description} Reservá por WhatsApp y recogé en Siguatepeque.`)
+  return clampMetaDescription(`${vendor.description} Pide por WhatsApp y recoge en Siguatepeque.`)
 }
 
 export function mercadoAssetUrl(path: string | null | undefined) {
@@ -58,12 +58,12 @@ export function mercadoHomeCanonical() {
 }
 
 export function mercadoInscriptionTitle() {
-  return 'Solicitud de registro de local en página web | Mercado Municipal San Pablo'
+  return `Inscribe tu negocio | ${MERCADO_SEO.name}`
 }
 
 export function mercadoInscriptionDescription() {
   return clampMetaDescription(
-    'Registrá tu local en el directorio del Mercado San Pablo. El básico es gratis; el VIP es aportación anual que se coordina después. Sin cuenta. La publicación no es inmediata.'
+    'Inscribe tu negocio de Siguatepeque en sigua-online.com. El registro básico es gratis; la inscripción destacada cuesta L. 1,500 al año. Revisamos cada solicitud antes de publicarla.'
   )
 }
 

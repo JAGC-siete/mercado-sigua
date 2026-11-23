@@ -62,7 +62,7 @@ export default function MercadoFichaNuevaPage({ operatorEmail }: { operatorEmail
           whatsapp: app.whatsapp ?? '',
           featured: isVip,
           vipExpiresAt: isVip ? toDateInputValue(defaultVipExpiresAt()) : '',
-          description: `${app.business_name} de ${app.merchant_name} en el Mercado Municipal San Pablo. Pedí por WhatsApp y recogé en el local sin hacer fila.`,
+          description: `${app.business_name} de ${app.merchant_name} en Siguatepeque. Pide por WhatsApp y recoge sin hacer fila.`,
           products: ['Consultar por WhatsApp', '', '', '', ''],
           category: 'otros',
         })
@@ -116,7 +116,7 @@ export default function MercadoFichaNuevaPage({ operatorEmail }: { operatorEmail
   return (
     <MercadoAdminShell operatorEmail={operatorEmail}>
       <Head>
-        <title>Nueva ficha mercado | San Pablo</title>
+        <title>Nueva ficha mercado | Mercado Digital</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className="mx-auto w-full max-w-2xl space-y-6 p-6">

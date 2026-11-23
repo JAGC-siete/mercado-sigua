@@ -1,7 +1,6 @@
 /**
- * Home del directorio público. Shell: isPublicTenantLandingRoute (/mercadosanpablosigua).
- * No usa AuthContext ni chrome de marketing de Humano SISU.
- * No pisa pages/index.tsx.
+ * Home de Mercado Digital de Siguatepeque: directorio público de negocios en /.
+ * Solo fichas reales de la base; sin filas pinta el estado vacío con CTA de inscripción.
  */
 
 import Head from 'next/head'
@@ -10,44 +9,37 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import type { GetStaticProps } from 'next'
 import { useRouter } from 'next/router'
 import { Search } from 'lucide-react'
-import MercadoPublicShell from '../../components/mercado/MercadoPublicShell'
-import { MercadoInscriptionBanner } from '../../components/mercado/InscriptionCta'
-import VendorCard from '../../components/mercado/VendorCard'
-import styles from '../../components/mercado/mercado.module.css'
+import MercadoPublicShell from '../components/mercado/MercadoPublicShell'
+import { MercadoInscriptionBanner } from '../components/mercado/InscriptionCta'
+import VendorCard from '../components/mercado/VendorCard'
+import styles from '../components/mercado/mercado.module.css'
 import {
   VENDOR_CATEGORIES,
   VENDOR_CATEGORY_LABEL,
   isVendorCategory,
   type VendorCategory,
-} from '../../lib/mercado/categories'
-import { VENDOR_CATEGORY_ICON } from '../../lib/mercado/category-icons'
-import {
-  MERCADO_FEATURED_GROUPS,
-  MERCADO_GEO,
-  MERCADO_HOME_COPY,
-  MERCADO_SEO,
-  mercadoSearchHints,
-} from '../../lib/mercado/home'
-import { mercadoShoppingCenterJsonLd, serializeJsonLd } from '../../lib/mercado/jsonld'
+} from '../lib/mercado/categories'
+import { VENDOR_CATEGORY_ICON } from '../lib/mercado/category-icons'
+import { MERCADO_HOME_COPY, MERCADO_SEO } from '../lib/mercado/home'
+import { mercadoDirectoryJsonLd, serializeJsonLd } from '../lib/mercado/jsonld'
 import {
   mercadoAssetUrl,
   mercadoCategoryTitle,
   mercadoHomeCanonical,
   mercadoHomeDescription,
   mercadoHomeTitle,
-} from '../../lib/mercado/meta'
-import { MERCADO_HOW_IT_WORKS_STEPS } from '../../lib/mercado/how-it-works'
-import { mercadoHomePath, mercadoVendorPath } from '../../lib/mercado/paths'
-import { mercadoStaticSrc } from '../../lib/mercado/assets'
-import type { PublicVendorCard } from '../../lib/mercado/schema'
+} from '../lib/mercado/meta'
+import { MERCADO_HOW_IT_WORKS_STEPS } from '../lib/mercado/how-it-works'
+import { mercadoHomePath, mercadoInscriptionPath, mercadoV2HomePath } from '../lib/mercado/paths'
+import { mercadoStaticSrc } from '../lib/mercado/assets'
+import type { PublicVendorCard } from '../lib/mercado/schema'
 import {
   MERCADO_ISR_REVALIDATE_SECONDS,
   resolvePublicVendors,
-} from '../../lib/mercado/vendors-db'
+} from '../lib/mercado/vendors-db'
 
 interface MercadoHomeProps {
   vendors: PublicVendorCard[]
-  source: 'database' | 'preview'
 }
 
 export default function MercadoHomePage({ vendors }: MercadoHomeProps) {
@@ -55,7 +47,6 @@ export default function MercadoHomePage({ vendors }: MercadoHomeProps) {
   const rawCategory = typeof router.query.categoria === 'string' ? router.query.categoria : ''
   const category: VendorCategory | null = isVendorCategory(rawCategory) ? rawCategory : null
   const [search, setSearch] = useState('')
-  const [hintsOpen, setHintsOpen] = useState(false)
 
   useEffect(() => {
     if (typeof router.query.q === 'string') setSearch(router.query.q)
@@ -83,27 +74,8 @@ export default function MercadoHomePage({ vendors }: MercadoHomeProps) {
     })
   }, [byCategory, search])
 
-  const grouped = useMemo(() => {
-    if (category || search.trim()) return null
-    const used = new Set<string>()
-    const groups = MERCADO_FEATURED_GROUPS.map((group) => ({
-      heading: group.heading,
-      vendors: group.slugs
-        .map((slug) => visible.find((vendor) => vendor.slug === slug))
-        .filter((vendor): vendor is PublicVendorCard => Boolean(vendor)),
-    })).filter((group) => {
-      group.vendors.forEach((vendor) => used.add(vendor.slug))
-      return group.vendors.length > 0
-    })
-    const rest = visible.filter((vendor) => !used.has(vendor.slug))
-    return { groups, rest }
-  }, [visible, category, search])
-
-  const hints = useMemo(() => mercadoSearchHints(search), [search])
-
   const onSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setHintsOpen(false)
     const nextQuery: Record<string, string> = {}
     if (category) nextQuery.categoria = category
     if (search.trim()) nextQuery.q = search.trim()
@@ -114,7 +86,7 @@ export default function MercadoHomePage({ vendors }: MercadoHomeProps) {
   const description = mercadoHomeDescription()
   const canonical = mercadoHomeCanonical()
   const ogImage = mercadoAssetUrl(MERCADO_SEO.heroImage)
-  const jsonLd = mercadoShoppingCenterJsonLd(vendors)
+  const jsonLd = mercadoDirectoryJsonLd(vendors)
 
   return (
     <>
@@ -126,6 +98,7 @@ export default function MercadoHomePage({ vendors }: MercadoHomeProps) {
         <link rel="canonical" href={canonical} />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="es_HN" />
+        <meta property="og:site_name" content={MERCADO_SEO.name} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={canonical} />
@@ -159,92 +132,61 @@ export default function MercadoHomePage({ vendors }: MercadoHomeProps) {
               <div className={styles.searchBar}>
                 <Search className="ml-4 h-6 w-6 shrink-0 text-stone-400" aria-hidden />
                 <label htmlFor="mercado-search" className="sr-only">
-                  ¿De qué tienes ganas hoy?
+                  ¿Qué buscas hoy?
                 </label>
                 <input
                   id="mercado-search"
                   value={search}
-                  onChange={(event) => {
-                    setSearch(event.target.value)
-                    setHintsOpen(true)
-                  }}
-                  onFocus={() => setHintsOpen(true)}
-                  onBlur={() => {
-                    window.setTimeout(() => setHintsOpen(false), 120)
-                  }}
-                  placeholder="¿De qué tienes ganas hoy? Caldo, tomate, carnita…"
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="¿Qué buscas hoy? Comida, ropa, abarrotes…"
                   className="h-14 min-w-0 flex-1 border-0 bg-transparent px-4 text-lg text-stone-800 shadow-none ring-0 placeholder:text-stone-400 focus:border-0 focus:outline-none focus:ring-0"
                   autoComplete="off"
-                  aria-autocomplete="list"
-                  aria-expanded={hintsOpen && hints.length > 0}
-                  aria-controls="mercado-search-hints"
                 />
                 <button type="submit" className={styles.searchSubmit}>
                   Buscar
                 </button>
               </div>
-              {hintsOpen && hints.length > 0 && (
-                <ul id="mercado-search-hints" role="listbox" className={styles.searchHints}>
-                  {hints.map((hint) => (
-                    <li key={hint.label} role="option">
-                      <Link href={mercadoVendorPath(hint.slug)} className={styles.searchHintLink}>
-                        {hint.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </form>
           </div>
         </section>
 
         <section className={`${styles.homeSection} mx-auto max-w-6xl px-4 pt-12`}>
-          <h2 className={styles.sectionTitle}>{MERCADO_HOME_COPY.traditionTitle}</h2>
+          <h2 className={styles.sectionTitle}>{MERCADO_HOME_COPY.introTitle}</h2>
           <p className="mt-3 max-w-3xl" style={{ color: 'var(--mercado-muted)' }}>
-            {MERCADO_HOME_COPY.traditionBody}
+            {MERCADO_HOME_COPY.introBody}
           </p>
         </section>
 
-        <section id="puestos" className={`${styles.homeSection} mx-auto max-w-6xl px-4 py-12`}>
+        <section id="negocios" className={`${styles.homeSection} mx-auto max-w-6xl px-4 py-12`}>
           <h2 className={`${styles.sectionTitle} mb-3`}>
             {category
               ? VENDOR_CATEGORY_LABEL[category]
               : search.trim()
-                ? 'Puestos destacados'
-                : MERCADO_HOME_COPY.producerTitle}
+                ? 'Resultados de tu búsqueda'
+                : MERCADO_HOME_COPY.directoryTitle}
           </h2>
           {!category && !search.trim() && (
             <p className="mb-6 max-w-3xl" style={{ color: 'var(--mercado-muted)' }}>
-              {MERCADO_HOME_COPY.producerBody}
+              {MERCADO_HOME_COPY.directoryBody}
             </p>
           )}
-          {visible.length === 0 ? (
+          {vendors.length === 0 ? (
+            <div
+              className="rounded-xl border px-4 py-10 text-center"
+              style={{ borderColor: 'var(--mercado-line)', color: 'var(--mercado-muted)' }}
+            >
+              <p>{MERCADO_HOME_COPY.emptyDirectory}</p>
+              <Link href={mercadoInscriptionPath()} className={`${styles.ctaSolid} mt-4`}>
+                Inscribir mi negocio
+              </Link>
+            </div>
+          ) : visible.length === 0 ? (
             <p
               className="rounded-xl border px-4 py-10 text-center"
               style={{ borderColor: 'var(--mercado-line)', color: 'var(--mercado-muted)' }}
             >
-              No hay puestos que coincidan con esa búsqueda.
+              No hay negocios que coincidan con esa búsqueda.
             </p>
-          ) : grouped ? (
-            <div className="grid gap-10">
-              {grouped.groups.map((group) => (
-                <div key={group.heading}>
-                  <h3 className={styles.groupTitle}>{group.heading}</h3>
-                  <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {group.vendors.map((vendor) => (
-                      <VendorCard key={vendor.slug} vendor={vendor} titleAs="p" />
-                    ))}
-                  </div>
-                </div>
-              ))}
-              {grouped.rest.length > 0 ? (
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {grouped.rest.map((vendor) => (
-                    <VendorCard key={vendor.slug} vendor={vendor} />
-                  ))}
-                </div>
-              ) : null}
-            </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {visible.map((vendor) => (
@@ -309,67 +251,42 @@ export default function MercadoHomePage({ vendors }: MercadoHomeProps) {
         <MercadoInscriptionBanner />
 
         <section
-          id="como-funciona-locatarios"
+          id="como-funciona-negocios"
           className={`${styles.homeSection} mx-auto max-w-6xl px-4 pb-12`}
         >
           <div className={styles.panelLocal}>
-            <h2 className={styles.sectionTitle}>Cómo aparece tu ficha (locatarios)</h2>
+            <h2 className={styles.sectionTitle}>Cómo aparece tu negocio</h2>
             <ol className="mt-4 grid gap-3 text-sm sm:grid-cols-3" style={{ color: 'var(--mercado-muted)' }}>
               <li>
                 <strong style={{ color: 'var(--mercado-cacao)' }}>1. Solicitud</strong>
                 <p className="mt-1">
-                  Enviás el local, WhatsApp y el plan. El básico es gratis; el VIP se coordina aparte.
+                  Envías el nombre, el WhatsApp y el plan. El registro básico es gratis; la
+                  inscripción destacada cuesta L. 1,500 al año.
                 </p>
               </li>
               <li>
                 <strong style={{ color: 'var(--mercado-cacao)' }}>2. Revisión</strong>
-                <p className="mt-1">El equipo revisa a mano y arma la ficha Pickup.</p>
+                <p className="mt-1">Revisamos tu solicitud a mano y armamos tu ficha.</p>
               </li>
               <li>
                 <strong style={{ color: 'var(--mercado-cacao)' }}>3. Publicación</strong>
-                <p className="mt-1">Tu puesto queda visible para que te pidan por WhatsApp.</p>
+                <p className="mt-1">Tu negocio queda visible para que te escriban por WhatsApp.</p>
               </li>
             </ol>
           </div>
         </section>
 
-        <section id="ubicacion" className={`${styles.homeSection} mx-auto max-w-6xl px-4 pb-16`}>
-          <div className={`${styles.panelLocal} flex flex-col items-start gap-8 md:flex-row md:items-center`}>
-            <div className="flex-1">
-              <h2 className={styles.sectionTitle}>¿Cómo llegar al mercado?</h2>
-              <p className="mt-4" style={{ color: 'var(--mercado-ink)' }}>
-                {MERCADO_GEO.howToArrive}
+        <section id="mercado-san-pablo" className={`${styles.homeSection} mx-auto max-w-6xl px-4 pb-16`}>
+          <div className={`${styles.panelLocal} flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between`}>
+            <div className="max-w-2xl">
+              <h2 className={styles.sectionTitle}>{MERCADO_HOME_COPY.sanPabloTitle}</h2>
+              <p className="mt-3" style={{ color: 'var(--mercado-muted)' }}>
+                {MERCADO_HOME_COPY.sanPabloBody}
               </p>
-              <p
-                className="mt-4 inline-block rounded-lg px-4 py-2 font-mono text-sm"
-                style={{ background: '#fff', color: 'var(--mercado-muted)' }}
-              >
-                {MERCADO_GEO.label}
-              </p>
-              <div className="mt-4">
-                <a
-                  href={MERCADO_GEO.mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.ctaSolid}
-                >
-                  Abrir en Google Maps
-                </a>
-              </div>
             </div>
-            <a
-              href={MERCADO_GEO.mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-48 w-full items-center justify-center rounded-xl border text-center text-sm md:w-1/3"
-              style={{
-                borderColor: 'var(--mercado-line)',
-                background: '#fff',
-                color: 'var(--mercado-muted)',
-              }}
-            >
-              Mapa: {MERCADO_GEO.landmark}
-            </a>
+            <Link href={mercadoV2HomePath()} className={styles.ctaSolid}>
+              {MERCADO_HOME_COPY.sanPabloCta}
+            </Link>
           </div>
         </section>
       </MercadoPublicShell>
@@ -383,7 +300,6 @@ export const getStaticProps: GetStaticProps<MercadoHomeProps> = async () => {
   return {
     props: {
       vendors: resolved.vendors,
-      source: resolved.source,
     },
     revalidate: MERCADO_ISR_REVALIDATE_SECONDS,
   }

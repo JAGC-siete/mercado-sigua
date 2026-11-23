@@ -91,7 +91,7 @@ export default function AppLoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
       <Head>
-        <title>Iniciar sesión · Mercado San Pablo</title>
+        <title>Iniciar sesión · Mercado Digital de Siguatepeque</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <Card variant="glass" className="w-full max-w-md">

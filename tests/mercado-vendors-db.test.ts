@@ -55,7 +55,7 @@ describe('mercado: whatsapp pickup templates', () => {
       products: ['Lomo'],
       category: 'carnes',
     })
-    assert.match(msg, /vengo del directorio San Pablo/i)
+    assert.match(msg, /vengo de sigua-online\.com/i)
     assert.match(msg, /reservar|pedir/i)
     assert.match(msg, /corte/i)
   })

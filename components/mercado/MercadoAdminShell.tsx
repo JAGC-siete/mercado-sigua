@@ -41,7 +41,7 @@ export default function MercadoAdminShell({
       <header className="border-b border-white/10 bg-slate-900/80">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-4">
           <div>
-            <p className="text-sm font-semibold">Mercado San Pablo · operador</p>
+            <p className="text-sm font-semibold">Mercado Digital de Siguatepeque · operador</p>
             {operatorEmail ? <p className="text-xs text-white/50">{operatorEmail}</p> : null}
           </div>
           <nav className="flex flex-wrap items-center gap-3 text-sm">

@@ -1,7 +1,7 @@
-import { MERCADO_GEO, MERCADO_SEO } from '../../lib/mercado/home'
+import { MERCADO_GEO, MERCADO_SEO, SAN_PABLO_MARKET } from '../../lib/mercado/home'
 import { MERCADO_HOURS_ROWS } from '../../lib/mercado/market-hours'
 import { MERCADO_V2_AREAS, MERCADO_V2_COPY } from '../../lib/mercado/v2'
-import { mercadoInscriptionPath, mercadoV2HomePath } from '../../lib/mercado/paths'
+import { mercadoHomePath, mercadoInscriptionPath, mercadoV2HomePath } from '../../lib/mercado/paths'
 import { PRIVACY_PUBLIC_PATH, TERMS_PUBLIC_PATH } from '../../lib/marketing/legal-paths'
 import { v2 } from './mv2'
 
@@ -12,7 +12,7 @@ export default function MercadoV2Footer() {
         <section>
           <h2 className={v2.footerHeading}>Horario del mercado</h2>
           <table className={v2.hoursTable}>
-            <caption className={v2.visuallyHidden}>Horario oficial del Mercado Municipal San Pablo</caption>
+            <caption className={v2.visuallyHidden}>Horario del {SAN_PABLO_MARKET.name}</caption>
             <tbody>
               {MERCADO_HOURS_ROWS.map((row) => (
                 <tr key={row.days}>
@@ -23,7 +23,7 @@ export default function MercadoV2Footer() {
             </tbody>
           </table>
           <p className={v2.footerMuted}>
-            {MERCADO_SEO.addressLine}.{' '}
+            {SAN_PABLO_MARKET.addressLine}.{' '}
             <a href={MERCADO_GEO.mapsUrl} target="_blank" rel="noopener noreferrer">
               Ver en Maps
             </a>
@@ -62,8 +62,9 @@ export default function MercadoV2Footer() {
 
       <div className={v2.footerTrust}>
         <p>
-          Página institucional del Mercado Municipal San Pablo. La compra se hace en el recinto, en
-          cada área del mercado.
+          Página del {SAN_PABLO_MARKET.name} en {MERCADO_SEO.name}. La compra se hace en el
+          recinto, en cada área del mercado.{' '}
+          <a href={mercadoHomePath()}>Ver negocios de {MERCADO_SEO.city}</a>
         </p>
         <p className={v2.footerLegal}>
           <a href={PRIVACY_PUBLIC_PATH}>Política de privacidad</a>

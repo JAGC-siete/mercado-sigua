@@ -120,13 +120,13 @@ export default function MercadoSolicitudesPage({ operatorEmail }: { operatorEmai
   return (
     <MercadoAdminShell operatorEmail={operatorEmail}>
       <Head>
-        <title>Solicitudes mercado | San Pablo</title>
+        <title>Solicitudes mercado | Mercado Digital</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className="space-y-6 p-6">
         <header className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-white">Mercado San Pablo — Solicitudes</h1>
+            <h1 className="text-2xl font-bold text-white">Mercado Digital — Solicitudes</h1>
             <p className="mt-1 text-sm text-white/60">
               Inscripción al directorio Pickup. Revisá → Creá ficha (pasa a Aprobada). No escribe en
               leads ni en planilla.

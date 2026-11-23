@@ -122,13 +122,13 @@ export default function MercadoFichasAdminPage({ operatorEmail }: { operatorEmai
   return (
     <MercadoAdminShell operatorEmail={operatorEmail}>
       <Head>
-        <title>Fichas mercado | San Pablo</title>
+        <title>Fichas mercado | Mercado Digital</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className="space-y-6 p-6">
         <header className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-white">Fichas /mercadosanpablosigua</h1>
+            <h1 className="text-2xl font-bold text-white">Fichas del directorio</h1>
             <p className="mt-1 max-w-2xl text-sm text-white/60">
               Alta y baja de puestos. VIP = aportación anual con vencimiento. El público solo ve
               activos; el pickup es por WhatsApp.

@@ -2,17 +2,17 @@
 export const MERCADO_HOW_IT_WORKS_STEPS = [
   {
     n: 1,
-    title: 'Buscá',
-    body: 'Encontrá el puesto por categoría o nombre en el directorio.',
+    title: 'Busca',
+    body: 'Encuentra el negocio por categoría o por nombre en el directorio.',
   },
   {
     n: 2,
-    title: 'Pedí por WhatsApp',
-    body: 'Tocá Pedir y Recoger. El mensaje ya lleva el puesto y lo que querés.',
+    title: 'Pide por WhatsApp',
+    body: 'Toca Pedir y Recoger. El mensaje ya lleva el negocio y lo que quieres.',
   },
   {
     n: 3,
-    title: 'Recogé sin fila',
-    body: 'Confirmá con el locatario y pasá al local cuando te diga que está listo.',
+    title: 'Recoge sin fila',
+    body: 'Confirma con el negocio y pasa a recoger cuando te avise que está listo.',
   },
 ] as const

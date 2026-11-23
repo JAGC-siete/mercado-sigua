@@ -6,6 +6,6 @@ export const VENDOR_PAYMENT_METHOD_LABEL: Record<VendorPaymentMethod, string> = 
 }
 
 export const VENDOR_PAYMENT_METHOD_HINT: Record<VendorPaymentMethod, string> = {
-  efectivo: 'Pagás al recoger',
-  transferencia_bac: 'Reservá con transferencia',
+  efectivo: 'Pagas al recoger',
+  transferencia_bac: 'Reserva con transferencia',
 }

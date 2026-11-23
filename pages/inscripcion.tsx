@@ -1,20 +1,20 @@
 /**
- * Solicitud pública de registro de local. Sin cuenta, sin cobro en línea, sin publicación automática.
- * Shell: isPublicTenantLandingRoute (/mercadosanpablosigua/inscripcion).
+ * Solicitud pública de registro de negocio (/inscripcion).
+ * Sin cuenta, sin cobro en línea, sin publicación automática.
  */
 
 import Head from 'next/head'
 import Link from 'next/link'
-import InscriptionForm from '../../components/mercado/InscriptionForm'
-import MercadoPublicShell from '../../components/mercado/MercadoPublicShell'
-import styles from '../../components/mercado/mercado.module.css'
-import { MERCADO_SEO } from '../../lib/mercado/home'
+import InscriptionForm from '../components/mercado/InscriptionForm'
+import MercadoPublicShell from '../components/mercado/MercadoPublicShell'
+import styles from '../components/mercado/mercado.module.css'
+import { MERCADO_SEO } from '../lib/mercado/home'
 import {
   mercadoInscriptionCanonical,
   mercadoInscriptionDescription,
   mercadoInscriptionTitle,
-} from '../../lib/mercado/meta'
-import { mercadoHomePath } from '../../lib/mercado/paths'
+} from '../lib/mercado/meta'
+import { mercadoHomePath } from '../lib/mercado/paths'
 
 export default function MercadoInscriptionPage() {
   const title = mercadoInscriptionTitle()
@@ -31,6 +31,7 @@ export default function MercadoInscriptionPage() {
         <link rel="canonical" href={canonical} />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="es_HN" />
+        <meta property="og:site_name" content={MERCADO_SEO.name} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={canonical} />
@@ -44,12 +45,12 @@ export default function MercadoInscriptionPage() {
             Volver al directorio
           </Link>
           <h1 className="mt-6 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
-            Solicitud de registro de local en página web
+            Inscribe tu negocio
           </h1>
           <p className={`mt-4 ${styles.inscriptionLead}`}>
-            Completá estos datos para pedir que tu comercio aparezca en el directorio de{' '}
-            {MERCADO_SEO.name}. El registro básico es gratuito. El perfil destacado con una
-            aportación anual (L. 1,500).
+            Completa estos datos para que tu negocio aparezca en {MERCADO_SEO.name}. El registro
+            básico es gratis. La inscripción destacada cuesta L. 1,500 al año y pone tu negocio
+            entre los primeros del directorio.
           </p>
           <div className="mt-8">
             <InscriptionForm />
